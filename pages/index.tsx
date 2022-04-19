@@ -5,7 +5,6 @@ import { Color, Size, TOOLKIT_GENERATOR, Toolkit as ToolkitJS, Vector, Scene, Sc
 import { LottiePlugin } from '@lottiefiles/toolkit-plugin-lottie';
 import { Player as LottiePlayer, Controls } from '@lottiefiles/react-lottie-player';
 import { useRef, useState } from 'react';
-import { ShapeType } from '@lottiefiles/lottie-js';
 
 export interface LottieData {
   lottie?: any;
@@ -58,7 +57,10 @@ const Home: NextPage = () => {
     const group = shapeLayer.createGroupShape();
 
     // Add a rectangle to the group
-    const rect = group.createShape(ShapeType.PATH)
+    const rect = group.createRectangleShape()
+      .setSize(new Size(200, 200))
+      .setPosition(new Vector(256, 256))
+      .setRoundness(new Scalar(30));
 
     const timeline = scene.timeline.addTrack(rect.tracks[0]);
     const easing = new BezierInterpolator(new Vector(1 / 3, 0), new Vector(2 / 3, 1));
