@@ -1,11 +1,12 @@
 import type { NextPage } from 'next'
 import Head from 'next/head';
-
+import { PlusIcon } from '@heroicons/react/solid'
 import { Color, Size, TOOLKIT_GENERATOR, Toolkit as ToolkitJS, Vector, Scene, Scalar, BezierInterpolator, CubicBezierShape } from '@lottiefiles/toolkit-js';
 import { LottiePlugin } from '@lottiefiles/toolkit-plugin-lottie';
 import { Player as LottiePlayer, Controls } from '@lottiefiles/react-lottie-player';
 import { useRef, useState } from 'react';
 import { verify } from 'crypto';
+const RandomGenerator = require('random-points-generator');
 
 export interface LottieData {
   lottie?: any;
@@ -40,17 +41,31 @@ const Home: NextPage = () => {
   toolkit.addPlugin(lottiePlugin);
 
   const generateBlob = async () => {
+    const vertices = 5;
+    const frames = 6;
+    const frameLength = 42;
+    const curves = [];
+
+    for (let i = 0; i < frames; i++) {
+      const generatedGeometry = RandomGenerator.random(vertices, { bbox: [-300, -300, 300, 300] });
+      const points = generatedGeometry.features.map((p: any) => { return p.geometry.coordinates });
+      const curve = new CubicBezierShape()
+      points.map((p: any) => { curve.addPoint(new Vector(p[0], p[1])) })
+      curve.setIsClosed(true);
+      curves.push(curve);
+    }
+
     const scene = toolkit
       .createScene({})
       .setIs3D(false)
       .setName('myLottieAnimation')
       .setSize(new Size(1080, 1080));
-    scene.timeline.setFrameRate(24).setStartAndEndFrame(0, 184);
+    scene.timeline.setFrameRate(24).setStartAndEndFrame(0, frames * frameLength);
 
     const shapeLayer = scene
       .createShapeLayer()
       .setName('Layer 1')
-      .setStartAndEndFrame(0, 184)
+      .setStartAndEndFrame(0, frames * frameLength)
       .setId('layer_1')
       .setHeight(1080)
       .setWidth(1080)
@@ -59,60 +74,74 @@ const Home: NextPage = () => {
 
     const group = shapeLayer.createGroupShape()
 
+    // const bc1 = new CubicBezierShape()
+    // bc1.addPoint(new Vector(-300, -300))
+    // bc1.addPoint(new Vector(300, -300), new Vector(-149.015, 0), new Vector(149.015, 0))
+    // bc1.addPoint(new Vector(300, 300),)
+    // bc1.addPoint(new Vector(-300, 300),)
+    // bc1.setIsClosed(true)
 
+    // const bc1 = new CubicBezierShape()
+    // bc1.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    // bc1.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
+    // bc1.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
+    // bc1.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
+    // bc1.setIsClosed(true)
 
-    const bc1 = new CubicBezierShape()
-    bc1.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    bc1.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
-    bc1.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
-    bc1.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
-    bc1.setIsClosed(true)
+    // const bc2 = new CubicBezierShape()
+    // bc2.addPoint(new Vector(-42, -403.816), new Vector(-240, 17.816), new Vector(148.607, -11.032))
+    // bc2.addPoint(new Vector(401.817, -64), new Vector(-31.817, -180), new Vector(33.197, 187.812))
+    // bc2.addPoint(new Vector(16, 423.816), new Vector(412, -25.816), new Vector(-219.788, 13.772))
+    // bc2.addPoint(new Vector(-385.816, -18), new Vector(-14.184, 212), new Vector(20.393, -304.813))
+    // bc2.setIsClosed(true)
 
-    const bc2 = new CubicBezierShape()
-    bc2.addPoint(new Vector(-42, -403.816), new Vector(-240, 17.816), new Vector(148.607, -11.032))
-    bc2.addPoint(new Vector(401.817, -64), new Vector(-31.817, -180), new Vector(33.197, 187.812))
-    bc2.addPoint(new Vector(16, 423.816), new Vector(412, -25.816), new Vector(-219.788, 13.772))
-    bc2.addPoint(new Vector(-385.816, -18), new Vector(-14.184, 212), new Vector(20.393, -304.813))
-    bc2.setIsClosed(true)
+    // const bc3 = new CubicBezierShape()
+    // bc3.addPoint(new Vector(-10.411, -382.598), new Vector(-207.589, 8.598), new Vector(236.411, -21.402))
+    // bc3.addPoint(new Vector(376.166, 70.53), new Vector(9.885, -185.411), new Vector(-28.058, 152.88))
+    // bc3.addPoint(new Vector(-33.362, 406.598), new Vector(224.397, 3.796), new Vector(-219.945, -3.75))
+    // bc3.addPoint(new Vector(-286.037, 72.778), new Vector(224.397, 3.796), new Vector(-165.963, -254.778))
+    // bc3.setIsClosed(true)
 
-    const bc3 = new CubicBezierShape()
-    bc3.addPoint(new Vector(-10.411, -382.598), new Vector(-207.589, 8.598), new Vector(236.411, -21.402))
-    bc3.addPoint(new Vector(376.166, 70.53), new Vector(9.885, -185.411), new Vector(-28.058, 152.88))
-    bc3.addPoint(new Vector(-33.362, 406.598), new Vector(224.397, 3.796), new Vector(-219.945, -3.75))
-    bc3.addPoint(new Vector(-286.037, 72.778), new Vector(224.397, 3.796), new Vector(-165.963, -254.778))
-    bc3.setIsClosed(true)
+    // const bc4 = new CubicBezierShape()
+    // bc4.addPoint(new Vector(-82, -333.816), new Vector(-230, -34.184), new Vector(234, 25.816),)
+    // bc4.addPoint(new Vector(410.997, -75.18), new Vector(-48.997, -234.82), new Vector(14.135, 180.256))
+    // bc4.addPoint(new Vector(10, 353.816), new Vector(283.676, 1.562), new Vector(-219.903, 1.011),)
+    // bc4.addPoint(new Vector(-353.652, 38.656), new Vector(35.652, 241.344), new Vector(-54.348, -378.656))
+    // bc4.setIsClosed(true)
 
-    const bc4 = new CubicBezierShape()
-    bc4.addPoint(new Vector(-82, -333.816), new Vector(-230, -34.184), new Vector(234, 25.816),)
-    bc4.addPoint(new Vector(410.997, -75.18), new Vector(-48.997, -234.82), new Vector(14.135, 180.256))
-    bc4.addPoint(new Vector(10, 353.816), new Vector(283.676, 1.562), new Vector(-219.903, 1.011),)
-    bc4.addPoint(new Vector(-353.652, 38.656), new Vector(35.652, 241.344), new Vector(-54.348, -378.656))
-    bc4.setIsClosed(true)
+    // const bc5 = new CubicBezierShape()
+    // bc5.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    // bc5.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
+    // bc5.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
+    // bc5.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
+    // bc5.setIsClosed(true)
 
-    const bc5 = new CubicBezierShape()
-    bc5.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    bc5.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
-    bc5.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
-    bc5.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
-    bc5.setIsClosed(true)
+    // const bc6 = new CubicBezierShape()
+    // bc6.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    // bc6.addPoint(new Vector(381.817, -44), new Vector(84.908, -122.459), new Vector(-81.817, 118))
+    // bc6.addPoint(new Vector(16, 423.816), new Vector(148.868, 6.6422), new Vector(-220, -9.816))
+    // bc6.addPoint(new Vector(-381.816, -2), new Vector(129.816, 152), new Vector(-96.776, -113.314))
+    // bc6.setIsClosed(true)
 
-    const bc6 = new CubicBezierShape()
-    bc6.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    bc6.addPoint(new Vector(381.817, -44), new Vector(84.908, -122.459), new Vector(-81.817, 118))
-    bc6.addPoint(new Vector(16, 423.816), new Vector(148.868, 6.6422), new Vector(-220, -9.816))
-    bc6.addPoint(new Vector(-381.816, -2), new Vector(129.816, 152), new Vector(-96.776, -113.314))
-    bc6.setIsClosed(true)
 
 
     const pathShape = group.createPathShape()
 
-    pathShape.shape
-      .setValue(bc1)
-      .setValueAtKeyFrame(bc2, 42)
-      .setValueAtKeyFrame(bc3, 89)
-      .setValueAtKeyFrame(bc4, 138)
-      .setValueAtKeyFrame(bc4, 184)
-      .setValueAtKeyFrame(bc5, 184.14453125)
+    curves.map((curve, i) => {
+      if (i === 0) {
+        pathShape.shape.setValue(curve)
+      } else {
+        pathShape.shape.setValueAtKeyFrame(curve, i * frameLength)
+      }
+    })
+
+    pathShape.shape.setValueAtKeyFrame(curves[0], frames * frameLength)
+
+    // .setValueAtKeyFrame(bc2, 42)
+    // .setValueAtKeyFrame(bc3, 89)
+    // .setValueAtKeyFrame(bc4, 138)
+    // .setValueAtKeyFrame(bc5, 184)
+    // .setValueAtKeyFrame(bc6, 184.14453125)
 
     group.createFillShape().setColor(new Color(136, 222, 242));
 
@@ -247,35 +276,23 @@ const Home: NextPage = () => {
 
   }
   return (
-    <div>
-      <button onClick={() => { setSrc2(items[0]) }}>Animation One</button>
-      <button onClick={() => { setSrc(items[1]) }}>Animation Two</button>
-      <button onClick={generateBlob}>Generate Blob</button>
-      <button onClick={checkBlob}>Check Blob</button>
-
-      <div style={{ display: "flex" }}>
-        <div style={{ width: '50%' }} >
-          {/* <LottiePlayer
-            renderer="svg"
-            lottieRef={(instance: any) => {
-              console.log(instance.animationData)
-            }}
-            src={src2} loop autoplay >
-            <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
-          </LottiePlayer> */}
-          <LottiePlayer
-            renderer="svg"
-            // lottieRef={(instance) => {
-            //   setData({ lottie: instance, dom: lottieRef.current?.container?.innerHTML });
-            // }}
-            src={src} loop autoplay controls >
-            <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
-          </LottiePlayer>
-        </div>
-        <div style={{ width: '50%' }}>
-          {/* <pre>{JSON.stringify(data.lottie, getCircularReplacer(), 2)}</pre> */}
-        </div>
+    <div className="text-center">
+      <p className="mt-4 text-sm text-gray-500">Some random shit</p>
+      <div className="mt-6">
+        <button
+          onClick={generateBlob}
+          type="button"
+          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Generate blob
+        </button>
       </div>
+      <LottiePlayer
+        renderer="svg"
+        style={{ height: "500px" }}
+        src={src} loop autoplay controls >
+        <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
+      </LottiePlayer>
     </div>
   )
 }
