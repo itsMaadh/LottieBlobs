@@ -84,15 +84,23 @@ const Home: NextPage = () => {
 
     const pathShape = group.createPathShape()
 
-    pathShape.shape
-      .setValue(bc1)
-    // .setValueAtKeyFrame(bc, 42)
+    // pathShape.shape
+    //   .setValue(bc1)
+    // .setValueAtKeyFrame(bc2, 42);
 
 
 
+    pathShape.setShape(bc1);
+    pathShape.setDirection(1);
 
 
-
+    // pathShape.shape.
+    // setValue(
+    // new CubicBezierShape(),
+    // bc1.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    // );
+    // .setValueAtKeyFrame(
+    //     new CubicBezierShape(), 50);
 
 
     // const shape = group
@@ -101,7 +109,14 @@ const Home: NextPage = () => {
     //   .setShape(bc)
 
 
-    group.createFillShape().setColor(new Color(136, 222, 242));
+    const fill = group.createFillShape();
+
+    fill.setColor(new Color(136, 222, 242));
+
+    fill.color.setValueAtKeyFrame(Color.from('red'), 50);
+    fill.color.setValueAtKeyFrame(Color.from('grey'), 100);
+    fill.color.setValueAtKeyFrame(Color.from('green'), 150);
+    
 
     const blob = await toolkit.export('com.lottiefiles.lottie', { scene });
     console.log(JSON.parse(blob as any))
