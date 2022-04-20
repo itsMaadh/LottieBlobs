@@ -67,10 +67,10 @@
   resolved "https://npm.pkg.github.com/download/@lottiefiles/toolkit-js/0.6.0/06f8f87f658dd0c5f5b0146cf90d1b23862a8c6862887370118809060c80394c#2c7a18595634de09ab29803a37d701754e4702c7"
   integrity sha512-/uGTL2v2WX8cX7sfrUWwO4ShvuzG/u4hOlGRnBSoFTnMe6ECjIcCWrbEAcD2Yr9Y+HcDLtWsYpAv/pCo/K0/Eg==
 
-"@lottiefiles/toolkit-plugin-lottie@0.5.0":
-  version "0.5.0"
-  resolved "https://npm.pkg.github.com/download/@lottiefiles/toolkit-plugin-lottie/0.5.0/3167760f7876e30a15c2d0e263a1b147b67973db98f150833bebc5ca5b697ce2#d71c41302dec76df6d0c47a88d25727089d623b4"
-  integrity sha512-1Vq80EMXP+1kMny+ooeVEah1t7E10aoaEgnxbIjnax+C3agDADwElXyQHITNhy8e1W5XwsXMwt2cHSGVybQjHQ==
+"@lottiefiles/toolkit-plugin-lottie@0.5.2":
+  version "0.5.2"
+  resolved "https://npm.pkg.github.com/download/@lottiefiles/toolkit-plugin-lottie/0.5.2/e725ecddd4a56b064d3a02846b5539d2431b797b45480c18d24804cad64ceb2d#c5390271dfe1eb77caa6b3bac1e2eab889453141"
+  integrity sha512-xnlbI52NuHHEBrcYD3ZaITI27USoPirUw9zAcekgIKmSnqpDPmz2egnsr6qtEW/vYHALriJibEbSg6N7KJ7f4Q==
 
 "@next/env@12.1.5":
   version "12.1.5"
