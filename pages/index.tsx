@@ -82,24 +82,37 @@ const Home: NextPage = () => {
     bc3.addPoint(new Vector(-286.037, 72.778), new Vector(224.397, 3.796), new Vector(-165.963, -254.778))
     bc3.setIsClosed(true)
 
+    const bc4 = new CubicBezierShape()
+    bc4.addPoint(new Vector(-82, -333.816), new Vector(-230, -34.184), new Vector(234, 25.816),)
+    bc4.addPoint(new Vector(410.997, -75.18), new Vector(-48.997, -234.82), new Vector(14.135, 180.256))
+    bc4.addPoint(new Vector(10, 353.816), new Vector(283.676, 1.562), new Vector(-219.903, 1.011),)
+    bc4.addPoint(new Vector(-353.652, 38.656), new Vector(35.652, 241.344), new Vector(-54.348, -378.656))
+    bc4.setIsClosed(true)
+
+    const bc5 = new CubicBezierShape()
+    bc5.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    bc5.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
+    bc5.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
+    bc5.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
+    bc5.setIsClosed(true)
+
+    const bc6 = new CubicBezierShape()
+    bc6.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    bc6.addPoint(new Vector(381.817, -44), new Vector(84.908, -122.459), new Vector(-81.817, 118))
+    bc6.addPoint(new Vector(16, 423.816), new Vector(148.868, 6.6422), new Vector(-220, -9.816))
+    bc6.addPoint(new Vector(-381.816, -2), new Vector(129.816, 152), new Vector(-96.776, -113.314))
+    bc6.setIsClosed(true)
+
+
     const pathShape = group.createPathShape()
 
     pathShape.shape
       .setValue(bc1)
-    // .setValueAtKeyFrame(bc, 42)
-
-
-
-
-
-
-
-
-    // const shape = group
-    //   .createPathShape()
-    //   .setName('Ellipse 1')
-    //   .setShape(bc)
-
+      .setValueAtKeyFrame(bc2, 42)
+      .setValueAtKeyFrame(bc3, 89)
+      .setValueAtKeyFrame(bc4, 138)
+      .setValueAtKeyFrame(bc4, 184)
+      .setValueAtKeyFrame(bc5, 184.14453125)
 
     group.createFillShape().setColor(new Color(136, 222, 242));
 
