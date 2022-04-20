@@ -59,15 +59,47 @@ const Home: NextPage = () => {
 
     const group = shapeLayer.createGroupShape()
 
-    const bc = new CubicBezierShape()
 
-    bc.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    bc.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
-    bc.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
-    bc.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
-    bc.setIsClosed(true)
 
-    const shape = group.createPathShape().setName('Ellipse 1').setShape(bc)
+    const bc1 = new CubicBezierShape()
+    bc1.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    bc1.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
+    bc1.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
+    bc1.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
+    bc1.setIsClosed(true)
+
+    const bc2 = new CubicBezierShape()
+    bc2.addPoint(new Vector(-42, -403.816), new Vector(-240, 17.816), new Vector(148.607, -11.032))
+    bc2.addPoint(new Vector(401.817, -64), new Vector(-31.817, -180), new Vector(33.197, 187.812))
+    bc2.addPoint(new Vector(16, 423.816), new Vector(412, -25.816), new Vector(-219.788, 13.772))
+    bc2.addPoint(new Vector(-385.816, -18), new Vector(-14.184, 212), new Vector(20.393, -304.813))
+    bc2.setIsClosed(true)
+
+    const bc3 = new CubicBezierShape()
+    bc3.addPoint(new Vector(-10.411, -382.598), new Vector(-207.589, 8.598), new Vector(236.411, -21.402))
+    bc3.addPoint(new Vector(376.166, 70.53), new Vector(9.885, -185.411), new Vector(-28.058, 152.88))
+    bc3.addPoint(new Vector(-33.362, 406.598), new Vector(224.397, 3.796), new Vector(-219.945, -3.75))
+    bc3.addPoint(new Vector(-286.037, 72.778), new Vector(224.397, 3.796), new Vector(-165.963, -254.778))
+    bc3.setIsClosed(true)
+
+    const pathShape = group.createPathShape()
+
+    pathShape.shape
+      .setValue(bc1)
+    // .setValueAtKeyFrame(bc, 42)
+
+
+
+
+
+
+
+
+    // const shape = group
+    //   .createPathShape()
+    //   .setName('Ellipse 1')
+    //   .setShape(bc)
+
 
     group.createFillShape().setColor(new Color(136, 222, 242));
 
