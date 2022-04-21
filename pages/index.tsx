@@ -13,17 +13,39 @@ export interface LottieData {
   dom?: any;
 }
 
-const getCircularReplacer = () => {
-  const seen = new WeakSet();
-  return (key: any, value: any) => {
-    if (typeof value === 'object' && value !== null) {
-      if (seen.has(value)) {
-        return;
-      }
-      seen.add(value);
-    }
-    return value;
-  };
+const centroid = (points: [[number, number]]) => {
+  if (typeof points === 'undefined') {
+    return [];
+  }
+
+  let dimensions = points[0].length;
+  let accumulation = points.reduce((acc, point) => {
+    point.forEach((dimension, idx) => {
+      acc[idx] += dimension;
+    });
+
+    return acc;
+  }, Array(dimensions).fill(0));
+
+  return accumulation.map(dimension => dimension / points.length);
+}
+
+
+const sortPoints = (points: any) => {
+  var radianidx: any = [];
+
+  let c = centroid(points);
+
+  points.map((point: any, i: any) => {
+    let v = [point[0] - c[0], point[1] - c[1]];
+    let r = Math.atan2(v[1], v[0]);
+    radianidx.push([i, r]);
+  });
+  radianidx.sort(function (a: any, b: any) {
+    return b[1] - a[1];
+  });
+
+  return radianidx.map((idx: any) => points[idx[0]]);
 };
 
 const Home: NextPage = () => {
@@ -40,17 +62,24 @@ const Home: NextPage = () => {
 
   toolkit.addPlugin(lottiePlugin);
 
-  const generateBlob = async () => {
-    const vertices = 5;
+
+
+  /*  generate random blob  */
+  const generateBlob = async (sorted: boolean) => {
+
+    const vertices = 8;
     const frames = 6;
     const frameLength = 42;
     const curves = [];
 
     for (let i = 0; i < frames; i++) {
-      const generatedGeometry = RandomGenerator.random(vertices, { bbox: [-300, -300, 300, 300] });
-      const points = generatedGeometry.features.map((p: any) => { return p.geometry.coordinates });
+      const generatedGeometry = RandomGenerator.random(vertices, { bbox: [-500, -500, 500, 500] });
+      let points = generatedGeometry.features.map((p: any) => { return p.geometry.coordinates });
+      points = sorted ? sortPoints(points) : points;
       const curve = new CubicBezierShape()
-      points.map((p: any) => { curve.addPoint(new Vector(p[0], p[1])) })
+      points.map((p: any) => {
+        curve.addPoint(new Vector(p[0], p[1]))
+      })
       curve.setIsClosed(true);
       curves.push(curve);
     }
@@ -73,58 +102,6 @@ const Home: NextPage = () => {
       .setPosition(new Vector(543, 523))
 
     const group = shapeLayer.createGroupShape()
-
-    // const bc1 = new CubicBezierShape()
-    // bc1.addPoint(new Vector(-300, -300))
-    // bc1.addPoint(new Vector(300, -300), new Vector(-149.015, 0), new Vector(149.015, 0))
-    // bc1.addPoint(new Vector(300, 300),)
-    // bc1.addPoint(new Vector(-300, 300),)
-    // bc1.setIsClosed(true)
-
-    // const bc1 = new CubicBezierShape()
-    // bc1.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    // bc1.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
-    // bc1.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
-    // bc1.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
-    // bc1.setIsClosed(true)
-
-    // const bc2 = new CubicBezierShape()
-    // bc2.addPoint(new Vector(-42, -403.816), new Vector(-240, 17.816), new Vector(148.607, -11.032))
-    // bc2.addPoint(new Vector(401.817, -64), new Vector(-31.817, -180), new Vector(33.197, 187.812))
-    // bc2.addPoint(new Vector(16, 423.816), new Vector(412, -25.816), new Vector(-219.788, 13.772))
-    // bc2.addPoint(new Vector(-385.816, -18), new Vector(-14.184, 212), new Vector(20.393, -304.813))
-    // bc2.setIsClosed(true)
-
-    // const bc3 = new CubicBezierShape()
-    // bc3.addPoint(new Vector(-10.411, -382.598), new Vector(-207.589, 8.598), new Vector(236.411, -21.402))
-    // bc3.addPoint(new Vector(376.166, 70.53), new Vector(9.885, -185.411), new Vector(-28.058, 152.88))
-    // bc3.addPoint(new Vector(-33.362, 406.598), new Vector(224.397, 3.796), new Vector(-219.945, -3.75))
-    // bc3.addPoint(new Vector(-286.037, 72.778), new Vector(224.397, 3.796), new Vector(-165.963, -254.778))
-    // bc3.setIsClosed(true)
-
-    // const bc4 = new CubicBezierShape()
-    // bc4.addPoint(new Vector(-82, -333.816), new Vector(-230, -34.184), new Vector(234, 25.816),)
-    // bc4.addPoint(new Vector(410.997, -75.18), new Vector(-48.997, -234.82), new Vector(14.135, 180.256))
-    // bc4.addPoint(new Vector(10, 353.816), new Vector(283.676, 1.562), new Vector(-219.903, 1.011),)
-    // bc4.addPoint(new Vector(-353.652, 38.656), new Vector(35.652, 241.344), new Vector(-54.348, -378.656))
-    // bc4.setIsClosed(true)
-
-    // const bc5 = new CubicBezierShape()
-    // bc5.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    // bc5.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
-    // bc5.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
-    // bc5.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
-    // bc5.setIsClosed(true)
-
-    // const bc6 = new CubicBezierShape()
-    // bc6.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    // bc6.addPoint(new Vector(381.817, -44), new Vector(84.908, -122.459), new Vector(-81.817, 118))
-    // bc6.addPoint(new Vector(16, 423.816), new Vector(148.868, 6.6422), new Vector(-220, -9.816))
-    // bc6.addPoint(new Vector(-381.816, -2), new Vector(129.816, 152), new Vector(-96.776, -113.314))
-    // bc6.setIsClosed(true)
-
-
-
     const pathShape = group.createPathShape()
 
     curves.map((curve, i) => {
@@ -137,11 +114,6 @@ const Home: NextPage = () => {
 
     pathShape.shape.setValueAtKeyFrame(curves[0], frames * frameLength)
 
-    // .setValueAtKeyFrame(bc2, 42)
-    // .setValueAtKeyFrame(bc3, 89)
-    // .setValueAtKeyFrame(bc4, 138)
-    // .setValueAtKeyFrame(bc5, 184)
-    // .setValueAtKeyFrame(bc6, 184.14453125)
 
     group.createFillShape().setColor(new Color(136, 222, 242));
 
@@ -150,149 +122,60 @@ const Home: NextPage = () => {
 
     setSrc(blob);
 
+  }
 
-    // let result = {
-    //   "v": "5.5.8", "fr": 24, "ip": 0, "op": 89, "w": 1080, "h": 1080, "nm": "lt blue blob", "ddd": 0, "assets": [], "layers": [
-    //     {
-    //       "ddd": 0, "ind": 1, "ty": 4, "nm": "Shape Layer 3", "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 432, "ix": 10 }, "p": { "a": 0, "k": [543, 523, 0], "ix": 2 }, "a": { "a": 0, "k": [49.816, 11.816, 0], "ix": 1 }, "s": { "a": 0, "k": [83, 83, 100], "ix": 6 } }, "ao": 0,
-    //       "shapes": [{
-    //         "ty": "gr",
-    //         "it": [
-    //           {
-    //             "ind": 0, "ty": "sh", "ix": 1, "ks": {
-    //               "a": 1,
-    //               "k": [
-    //                 {
-    //                   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 0,
-    //                   "s": [{
-    //                     "i": [[-149.015, 0], [107.659, -103.03], [277.36, -41.631], [49.73, 183.334]],
-    //                     "o": [[149.016, 0], [-165.076, 157.979], [-217.779, 32.688], [-39.011, -143.818]],
-    //                     "v": [[-42, -403.816], [287.085, -134.236], [16, 423.816], [-384.256, 61.009]],
-    //                     "c": true
-    //                   }]
-    //                 },
-    //                 {
-    //                   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 60,
-    //                   "s": [{
-    //                     "i": [[-240, 17.816], [-31.817, -180], [412, -25.816], [-14.184, 212]],
-    //                     "o": [[148.607, -11.032], [33.197, 187.812], [-219.788, 13.772], [20.393, -304.813]],
-    //                     "v": [[-42, -403.816], [401.817, -64], [16, 423.816], [-385.816, -18]],
-    //                     "c": true
-    //                   }]
-    //                 },
-    //                 {
-    //                   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 89,
-    //                   "s": [{
-    //                     "i": [[-207.589, 8.598], [9.885, -185.411], [224.397, 3.796], [142.037, 183.222]],
-    //                     "o": [[236.411, -21.402], [-28.058, 152.88], [-219.945, -3.75], [-165.963, -254.778]],
-    //                     "v": [[-10.411, -382.598], [376.166, 70.53], [-33.362, 406.598], [-286.037, 72.778]],
-    //                     "c": true
-    //                   }]
-    //                 },
-    //                 // {
-    //                 //   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 138,
-    //                 //   "s": [{
-    //                 //     "i": [[-230, -34.184], [-48.997, -234.82], [283.676, 1.562], [35.652, 241.344]],
-    //                 //     "o": [[234, 25.816], [14.135, 180.256], [-219.903, 1.011], [-54.348, -378.656]],
-    //                 //     "v": [[-82, -333.816], [410.997, -75.18], [10, 353.816], [-353.652, 38.656]],
-    //                 //     "c": true
-    //                 //   }]
-    //                 // },
-    //                 // {
-    //                 //   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 184,
-    //                 //   "s": [{
-    //                 //     "i": [[-149.015, 0], [107.659, -103.03], [277.36, -41.631], [49.73, 183.334]],
-    //                 //     "o": [[149.016, 0], [-165.076, 157.979], [-217.779, 32.688], [-39.011, -143.818]],
-    //                 //     "v": [[-42, -403.816], [287.085, -134.236], [16, 423.816], [-384.256, 61.009]],
-    //                 //     "c": true
-    //                 //   }]
-    //                 // },
-    //                 // {
-    //                 //   "t": 184.14453125, "s": [{
-    //                 //     "i": [[-149.015, 0], [84.908, -122.459], [148.868, 6.642], [129.816, 152]],
-    //                 //     "o": [[149.016, 0], [-81.817, 118], [-220, -9.816], [-96.776, -113.314]],
-    //                 //     "v": [[-42, -403.816], [381.817, -44], [16, 423.816], [-381.816, -2]],
-    //                 //     "c": true
-    //                 //   }]
-    //                 // }
-    //               ],
-    //               "ix": 2
-    //             }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false
-    //           },
-    //           {
-    //             "ty": "st", "c": { "a": 0, "k": [1, 0.945097979377, 0.898038976333, 1], "ix": 3 }, "o": { "a": 0, "k": 100, "ix": 4 }, "w": { "a": 0, "k": 0, "ix": 5 }, "lc": 1, "lj": 1, "ml": 4, "bm": 0, "nm": "Stroke 1", "mn": "ADBE Vector Graphic - Stroke", "hd": false
-    //           },
-    //           {
-    //             "ty": "fl", "c": { "a": 0, "k": [0.533333333333, 0.870588235294, 0.949019607843, 1], "ix": 4 }, "o": { "a": 0, "k": 100, "ix": 5 }, "r": 1, "bm": 0, "nm": "Fill 1", "mn": "ADBE Vector Graphic - Fill", "hd": false
-    //           },
-    //           {
-    //             "ty": "tr",
-    //             "p": {
-    //               "a": 0, "k": [49.816, 11.816], "ix": 2
-    //             },
-    //             "a": {
-    //               "a": 0, "k": [0, 0], "ix": 1
-    //             },
-    //             "s": {
-    //               "a": 0, "k": [100, 100], "ix": 3
-    //             },
-    //             "r": {
-    //               "a": 0, "k": 0, "ix": 6
-    //             },
-    //             "o": {
-    //               "a": 0, "k": 100, "ix": 7
-    //             },
-    //             "sk": {
-    //               "a": 0, "k": 0, "ix": 4
-    //             },
-    //             "sa": {
-    //               "a": 0, "k": 0, "ix": 5
-    //             },
-    //             "nm": "Transform"
-    //           }
-    //         ],
-    //         "nm": "Ellipse 1", "np": 3, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false
-    //       }], "ip": 0, "op": 722, "st": 0, "bm": 0
-    //     }], "markers": []
-    // };
-
-    // let min = -1 * Math.floor(Math.random() * 500);
-    // let max = Math.floor(Math.random() * 500);
-
-    // result.layers[0].shapes[0].it[0].ks?.k.map((k) => {
-    //   let x = Math.floor(Math.random() * (max - min + 1) + min);
-    //   let y = Math.floor(Math.random() * (max - min + 1) + min);
-    //   console.log(x, y, min, max)
-    //   // k.s[0].v.map((v) => {
-    //   //   v[0] = v[0] + x;
-    //   //   v[1] = v[1] + y;
-    //   // })
-    // })
-
+  const saveBlob = async () => {
+    const fileName = `random-bLottie.json`;
+    const json = src;
+    const blob = new Blob([json], { type: `application/ json` });
+    const href = await URL.createObjectURL(blob);
+    const link = document.createElement(`a`);
+    link.href = href;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   const checkBlob = async () => {
     console.log(data.lottie.animationData)
-
   }
+
   return (
     <div className="text-center">
       <p className="mt-4 text-sm text-gray-500">Some random shit</p>
       <div className="mt-6">
         <button
-          onClick={generateBlob}
+          onClick={() => generateBlob(false)}
           type="button"
           className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Generate blob
+          Generate unsorted blob
+        </button><button
+          onClick={() => generateBlob(true)}
+          type="button"
+          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Generate sorted blob
         </button>
       </div>
-      <LottiePlayer
-        renderer="svg"
-        style={{ height: "500px" }}
-        src={src} loop autoplay controls >
-        <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
-      </LottiePlayer>
+      <div style={{ width: '500px', margin: 'auto' }}>
+        <LottiePlayer
+          renderer="svg"
+          style={{ height: "500px" }}
+          src={src} loop autoplay controls >
+          <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
+        </LottiePlayer>
+      </div>
+      <div className="mt-6">
+        <button
+          onClick={() => saveBlob()}
+          type="button"
+          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Download lottie
+        </button>
+      </div>
     </div>
   )
 }
