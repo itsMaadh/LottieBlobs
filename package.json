@@ -13,8 +13,11 @@
     "@lottiefiles/react-lottie-player": "3.4.1",
     "@lottiefiles/toolkit-js": "0.6.0",
     "@lottiefiles/toolkit-plugin-lottie": "0.5.2",
+    "extract-svg-path": "2.1.0",
     "fs": "0.0.1-security",
+    "load-svg": "1.0.0",
     "next": "12.1.5",
+    "parse-svg-path": "0.1.2",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-json-view": "1.21.3"

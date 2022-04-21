@@ -7,6 +7,7 @@ import { Player as LottiePlayer, Controls } from '@lottiefiles/react-lottie-play
 import { useRef, useState } from 'react';
 import { verify } from 'crypto';
 
+
 export interface LottieData {
   lottie?: any;
   dom?: any;
@@ -22,7 +23,7 @@ const getCircularReplacer = () => {
       seen.add(value);
     }
     return value;
-  };
+  }; 
 };
 
 const Home: NextPage = () => {
@@ -102,17 +103,35 @@ const Home: NextPage = () => {
     bc6.addPoint(new Vector(16, 423.816), new Vector(148.868, 6.6422), new Vector(-220, -9.816))
     bc6.addPoint(new Vector(-381.816, -2), new Vector(129.816, 152), new Vector(-96.776, -113.314))
     bc6.setIsClosed(true)
+   
+    const mf = new CubicBezierShape()
+    mf.addPoint(new Vector(-237.2010955810547, -413.6590270996094))
+    mf.addPoint(new Vector(-379.8522644042969, 271.1139831542969), new Vector(-149.015, 0), new Vector(149.016, 0))
+    mf.addPoint(new Vector(-63.72419738769531, -50.827999114990234),new Vector(-149.015, 0), new Vector(149.016, 0))
+    mf.addPoint(new Vector(153.8957061767578, -343.1533508300781),  new Vector(-149.015, 0), new Vector(149.016, 0) )
+    mf.addPoint(new Vector(-237.2010955810547, -413.6590270996094), new Vector(-149.015, 0), new Vector(149.016, 0) )
+    mf.setIsClosed(true)
+
+    //blob1
+    const blob1a = new CubicBezierShape()
+    .setVertices([new Vector(64.5, -35.9), new Vector(-4.9, 68.5), new Vector(-56.5, -31.6), new Vector(8.7, -61.8),  new Vector(52.3, -35.1)])
+    .setInTangents([new Vector(0, 0), new Vector(0, 100), new Vector(100, 100), new Vector(100, 0), new Vector(100, 0)])
+    .setOutTangents([new Vector(0, 0), new Vector(0, 100), new Vector(100, 100), new Vector(100, 0), new Vector(100, 0)]);
+    blob1a.setIsClosed(true)
 
 
     const pathShape = group.createPathShape()
 
     pathShape.shape
       .setValue(bc1)
-      .setValueAtKeyFrame(bc2, 42)
-      .setValueAtKeyFrame(bc3, 89)
-      .setValueAtKeyFrame(bc4, 138)
-      .setValueAtKeyFrame(bc4, 184)
-      .setValueAtKeyFrame(bc5, 184.14453125)
+
+    // pathShape.shape
+    //   .setValue(bc1)
+    //   .setValueAtKeyFrame(bc2, 42)
+    //   .setValueAtKeyFrame(bc3, 89)
+    //   .setValueAtKeyFrame(bc4, 138)
+    //   .setValueAtKeyFrame(bc4, 184)
+    //   .setValueAtKeyFrame(bc5, 184.14453125)
 
     const fill = group.createFillShape();
 
@@ -259,6 +278,9 @@ const Home: NextPage = () => {
       <button onClick={() => { setSrc(items[1]) }}>Animation Two</button>
       <button onClick={generateBlob}>Generate Blob</button>
       <button onClick={checkBlob}>Check Blob</button>
+      <button onClick={extractSVGPath}>Extract SVG</button>
+
+
 
       <div style={{ display: "flex" }}>
         <div style={{ width: '50%' }} >
@@ -285,6 +307,18 @@ const Home: NextPage = () => {
       </div>
     </div>
   )
+}
+
+const extractSVGPath = () => {
+    var parse = require('parse-svg-path')
+    var extract = require('extract-svg-path').parse
+    var load = require('load-svg')
+
+    load('svg/bc1.svg', function(err, svg) {
+        var paths = parse(extract(svg))
+        console.log(paths)
+    })
+
 }
 
 export default Home
