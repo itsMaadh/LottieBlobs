@@ -1,33 +1,39 @@
 {
-  "name": "blob-app",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@lottiefiles/lottie-js": "0.4.1",
-    "@lottiefiles/react-lottie-player": "3.4.1",
-    "@lottiefiles/toolkit-js": "0.6.0",
-    "@lottiefiles/toolkit-plugin-lottie": "0.5.2",
-    "extract-svg-path": "2.1.0",
-    "fs": "0.0.1-security",
-    "load-svg": "1.0.0",
-    "next": "12.1.5",
-    "parse-svg-path": "0.1.2",
-    "react": "18.0.0",
-    "react-dom": "18.0.0",
-    "react-json-view": "1.21.3"
-  },
-  "devDependencies": {
-    "@types/node": "17.0.25",
-    "@types/react": "18.0.5",
-    "@types/react-dom": "18.0.1",
-    "eslint": "8.13.0",
-    "eslint-config-next": "12.1.5",
-    "typescript": "4.6.3"
-  }
+    "name": "blob-app",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@heroicons/react": "1.0.6",
+        "@lottiefiles/lottie-js": "0.4.1",
+        "@lottiefiles/react-lottie-player": "3.4.1",
+        "@lottiefiles/toolkit-js": "0.6.0",
+        "@lottiefiles/toolkit-plugin-lottie": "0.5.2",
+        "extract-svg-path": "2.1.0",
+        "@tailwindcss/forms": "0.5.0",
+        "fs": "0.0.1-security",
+        "load-svg": "1.0.0",
+        "next": "12.1.5",
+        "parse-svg-path": "0.1.2",
+        "random-points-generator": "1.7.0",
+        "react": "18.0.0",
+        "react-dom": "18.0.0",
+        "react-json-view": "1.21.3"
+    },
+    "devDependencies": {
+        "@types/node": "17.0.25",
+        "@types/react": "18.0.5",
+        "@types/react-dom": "18.0.1",
+        "autoprefixer": "10.4.4",
+        "eslint": "8.13.0",
+        "eslint-config-next": "12.1.5",
+        "postcss": "8.4.12",
+        "tailwindcss": "3.0.24",
+        "typescript": "4.6.3"
+    }
 }
