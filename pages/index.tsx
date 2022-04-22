@@ -147,7 +147,7 @@ const Home: NextPage = () => {
   }
 
     const extractSVGPath = async () => {
-        let path = 'svg/blob3/blob (3).svg';
+        let path = 'svg/blob1/blob.svg';
         let parse = require('parse-svg-path')
         let extract = require('extract-svg-path').parse
         let load = require('load-svg')
