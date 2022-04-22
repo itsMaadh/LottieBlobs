@@ -40,7 +40,7 @@ const Home: NextPage = () => {
 
   toolkit.addPlugin(lottiePlugin);
 
-  const generateBlob = async () => {
+  const generateBlob = async (generatedBlob) => {
     const scene = toolkit
       .createScene({})
       .setIs3D(false)
@@ -60,70 +60,68 @@ const Home: NextPage = () => {
 
     const group = shapeLayer.createGroupShape()
 
+    // const bc1 = new CubicBezierShape()
+    // bc1.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    // bc1.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
+    // bc1.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
+    // bc1.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
+    // bc1.setIsClosed(true)
 
+    // const bc2 = new CubicBezierShape()
+    // bc2.addPoint(new Vector(-42, -403.816), new Vector(-240, 17.816), new Vector(148.607, -11.032))
+    // bc2.addPoint(new Vector(401.817, -64), new Vector(-31.817, -180), new Vector(33.197, 187.812))
+    // bc2.addPoint(new Vector(16, 423.816), new Vector(412, -25.816), new Vector(-219.788, 13.772))
+    // bc2.addPoint(new Vector(-385.816, -18), new Vector(-14.184, 212), new Vector(20.393, -304.813))
+    // bc2.setIsClosed(true)
 
-    const bc1 = new CubicBezierShape()
-    bc1.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    bc1.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
-    bc1.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
-    bc1.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
-    bc1.setIsClosed(true)
+    // const bc3 = new CubicBezierShape()
+    // bc3.addPoint(new Vector(-10.411, -382.598), new Vector(-207.589, 8.598), new Vector(236.411, -21.402))
+    // bc3.addPoint(new Vector(376.166, 70.53), new Vector(9.885, -185.411), new Vector(-28.058, 152.88))
+    // bc3.addPoint(new Vector(-33.362, 406.598), new Vector(224.397, 3.796), new Vector(-219.945, -3.75))
+    // bc3.addPoint(new Vector(-286.037, 72.778), new Vector(224.397, 3.796), new Vector(-165.963, -254.778))
+    // bc3.setIsClosed(true)
 
-    const bc2 = new CubicBezierShape()
-    bc2.addPoint(new Vector(-42, -403.816), new Vector(-240, 17.816), new Vector(148.607, -11.032))
-    bc2.addPoint(new Vector(401.817, -64), new Vector(-31.817, -180), new Vector(33.197, 187.812))
-    bc2.addPoint(new Vector(16, 423.816), new Vector(412, -25.816), new Vector(-219.788, 13.772))
-    bc2.addPoint(new Vector(-385.816, -18), new Vector(-14.184, 212), new Vector(20.393, -304.813))
-    bc2.setIsClosed(true)
+    // const bc4 = new CubicBezierShape()
+    // bc4.addPoint(new Vector(-82, -333.816), new Vector(-230, -34.184), new Vector(234, 25.816),)
+    // bc4.addPoint(new Vector(410.997, -75.18), new Vector(-48.997, -234.82), new Vector(14.135, 180.256))
+    // bc4.addPoint(new Vector(10, 353.816), new Vector(283.676, 1.562), new Vector(-219.903, 1.011),)
+    // bc4.addPoint(new Vector(-353.652, 38.656), new Vector(35.652, 241.344), new Vector(-54.348, -378.656))
+    // bc4.setIsClosed(true)
 
-    const bc3 = new CubicBezierShape()
-    bc3.addPoint(new Vector(-10.411, -382.598), new Vector(-207.589, 8.598), new Vector(236.411, -21.402))
-    bc3.addPoint(new Vector(376.166, 70.53), new Vector(9.885, -185.411), new Vector(-28.058, 152.88))
-    bc3.addPoint(new Vector(-33.362, 406.598), new Vector(224.397, 3.796), new Vector(-219.945, -3.75))
-    bc3.addPoint(new Vector(-286.037, 72.778), new Vector(224.397, 3.796), new Vector(-165.963, -254.778))
-    bc3.setIsClosed(true)
+    // const bc5 = new CubicBezierShape()
+    // bc5.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    // bc5.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
+    // bc5.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
+    // bc5.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
+    // bc5.setIsClosed(true)
 
-    const bc4 = new CubicBezierShape()
-    bc4.addPoint(new Vector(-82, -333.816), new Vector(-230, -34.184), new Vector(234, 25.816),)
-    bc4.addPoint(new Vector(410.997, -75.18), new Vector(-48.997, -234.82), new Vector(14.135, 180.256))
-    bc4.addPoint(new Vector(10, 353.816), new Vector(283.676, 1.562), new Vector(-219.903, 1.011),)
-    bc4.addPoint(new Vector(-353.652, 38.656), new Vector(35.652, 241.344), new Vector(-54.348, -378.656))
-    bc4.setIsClosed(true)
-
-    const bc5 = new CubicBezierShape()
-    bc5.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    bc5.addPoint(new Vector(287.085, -134.236), new Vector(107.659, -103.03), new Vector(-165.076, 157.979))
-    bc5.addPoint(new Vector(16, 423.816), new Vector(277.36, -41.631), new Vector(-217.779, 32.688))
-    bc5.addPoint(new Vector(-384.256, 61.009), new Vector(49.73, 183.334), new Vector(-39.011, -143.818))
-    bc5.setIsClosed(true)
-
-    const bc6 = new CubicBezierShape()
-    bc6.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
-    bc6.addPoint(new Vector(381.817, -44), new Vector(84.908, -122.459), new Vector(-81.817, 118))
-    bc6.addPoint(new Vector(16, 423.816), new Vector(148.868, 6.6422), new Vector(-220, -9.816))
-    bc6.addPoint(new Vector(-381.816, -2), new Vector(129.816, 152), new Vector(-96.776, -113.314))
-    bc6.setIsClosed(true)
+    // const bc6 = new CubicBezierShape()
+    // bc6.addPoint(new Vector(-42, -403.816), new Vector(-149.015, 0), new Vector(149.016, 0))
+    // bc6.addPoint(new Vector(381.817, -44), new Vector(84.908, -122.459), new Vector(-81.817, 118))
+    // bc6.addPoint(new Vector(16, 423.816), new Vector(148.868, 6.6422), new Vector(-220, -9.816))
+    // bc6.addPoint(new Vector(-381.816, -2), new Vector(129.816, 152), new Vector(-96.776, -113.314))
+    // bc6.setIsClosed(true)
    
-    const mf = new CubicBezierShape()
-    mf.addPoint(new Vector(-237.2010955810547, -413.6590270996094))
-    mf.addPoint(new Vector(-379.8522644042969, 271.1139831542969), new Vector(-149.015, 0), new Vector(149.016, 0))
-    mf.addPoint(new Vector(-63.72419738769531, -50.827999114990234),new Vector(-149.015, 0), new Vector(149.016, 0))
-    mf.addPoint(new Vector(153.8957061767578, -343.1533508300781),  new Vector(-149.015, 0), new Vector(149.016, 0) )
-    mf.addPoint(new Vector(-237.2010955810547, -413.6590270996094), new Vector(-149.015, 0), new Vector(149.016, 0) )
-    mf.setIsClosed(true)
+    // const mf = new CubicBezierShape()
+    // mf.addPoint(new Vector(-237.2010955810547, -413.6590270996094))
+    // mf.addPoint(new Vector(-379.8522644042969, 271.1139831542969), new Vector(-149.015, 0), new Vector(149.016, 0))
+    // mf.addPoint(new Vector(-63.72419738769531, -50.827999114990234),new Vector(-149.015, 0), new Vector(149.016, 0))
+    // mf.addPoint(new Vector(153.8957061767578, -343.1533508300781),  new Vector(-149.015, 0), new Vector(149.016, 0) )
+    // mf.addPoint(new Vector(-237.2010955810547, -413.6590270996094), new Vector(-149.015, 0), new Vector(149.016, 0) )
+    // mf.setIsClosed(true)
 
-    //blob1
-    const blob1a = new CubicBezierShape()
-    .setVertices([new Vector(64.5, -35.9), new Vector(-4.9, 68.5), new Vector(-56.5, -31.6), new Vector(8.7, -61.8),  new Vector(52.3, -35.1)])
-    .setInTangents([new Vector(0, 0), new Vector(0, 100), new Vector(100, 100), new Vector(100, 0), new Vector(100, 0)])
-    .setOutTangents([new Vector(0, 0), new Vector(0, 100), new Vector(100, 100), new Vector(100, 0), new Vector(100, 0)]);
-    blob1a.setIsClosed(true)
+    // //blob1
+    // const blob1a = new CubicBezierShape()
+    // .setVertices([new Vector(64.5, -35.9), new Vector(-4.9, 68.5), new Vector(-56.5, -31.6), new Vector(8.7, -61.8),  new Vector(52.3, -35.1)])
+    // .setInTangents([new Vector(0, 0), new Vector(0, 100), new Vector(100, 100), new Vector(100, 0), new Vector(100, 0)])
+    // .setOutTangents([new Vector(0, 0), new Vector(0, 100), new Vector(100, 100), new Vector(100, 0), new Vector(100, 0)]);
+    // blob1a.setIsClosed(true)
 
 
     const pathShape = group.createPathShape()
 
     pathShape.shape
-      .setValue(bc1)
+      .setValue(generatedBlob)
 
     // pathShape.shape
     //   .setValue(bc1)
@@ -146,179 +144,94 @@ const Home: NextPage = () => {
     console.log(JSON.parse(blob as any))
 
     setSrc(blob);
-
-
-    // let result = {
-    //   "v": "5.5.8", "fr": 24, "ip": 0, "op": 89, "w": 1080, "h": 1080, "nm": "lt blue blob", "ddd": 0, "assets": [], "layers": [
-    //     {
-    //       "ddd": 0, "ind": 1, "ty": 4, "nm": "Shape Layer 3", "sr": 1, "ks": { "o": { "a": 0, "k": 100, "ix": 11 }, "r": { "a": 0, "k": 432, "ix": 10 }, "p": { "a": 0, "k": [543, 523, 0], "ix": 2 }, "a": { "a": 0, "k": [49.816, 11.816, 0], "ix": 1 }, "s": { "a": 0, "k": [83, 83, 100], "ix": 6 } }, "ao": 0,
-    //       "shapes": [{
-    //         "ty": "gr",
-    //         "it": [
-    //           {
-    //             "ind": 0, "ty": "sh", "ix": 1, "ks": {
-    //               "a": 1,
-    //               "k": [
-    //                 {
-    //                   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 0,
-    //                   "s": [{
-    //                     "i": [[-149.015, 0], [107.659, -103.03], [277.36, -41.631], [49.73, 183.334]],
-    //                     "o": [[149.016, 0], [-165.076, 157.979], [-217.779, 32.688], [-39.011, -143.818]],
-    //                     "v": [[-42, -403.816], [287.085, -134.236], [16, 423.816], [-384.256, 61.009]],
-    //                     "c": true
-    //                   }]
-    //                 },
-    //                 {
-    //                   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 60,
-    //                   "s": [{
-    //                     "i": [[-240, 17.816], [-31.817, -180], [412, -25.816], [-14.184, 212]],
-    //                     "o": [[148.607, -11.032], [33.197, 187.812], [-219.788, 13.772], [20.393, -304.813]],
-    //                     "v": [[-42, -403.816], [401.817, -64], [16, 423.816], [-385.816, -18]],
-    //                     "c": true
-    //                   }]
-    //                 },
-    //                 {
-    //                   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 89,
-    //                   "s": [{
-    //                     "i": [[-207.589, 8.598], [9.885, -185.411], [224.397, 3.796], [142.037, 183.222]],
-    //                     "o": [[236.411, -21.402], [-28.058, 152.88], [-219.945, -3.75], [-165.963, -254.778]],
-    //                     "v": [[-10.411, -382.598], [376.166, 70.53], [-33.362, 406.598], [-286.037, 72.778]],
-    //                     "c": true
-    //                   }]
-    //                 },
-    //                 // {
-    //                 //   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 138,
-    //                 //   "s": [{
-    //                 //     "i": [[-230, -34.184], [-48.997, -234.82], [283.676, 1.562], [35.652, 241.344]],
-    //                 //     "o": [[234, 25.816], [14.135, 180.256], [-219.903, 1.011], [-54.348, -378.656]],
-    //                 //     "v": [[-82, -333.816], [410.997, -75.18], [10, 353.816], [-353.652, 38.656]],
-    //                 //     "c": true
-    //                 //   }]
-    //                 // },
-    //                 // {
-    //                 //   "i": { "x": 0.941, "y": 1 }, "o": { "x": 0.059, "y": 0 }, "t": 184,
-    //                 //   "s": [{
-    //                 //     "i": [[-149.015, 0], [107.659, -103.03], [277.36, -41.631], [49.73, 183.334]],
-    //                 //     "o": [[149.016, 0], [-165.076, 157.979], [-217.779, 32.688], [-39.011, -143.818]],
-    //                 //     "v": [[-42, -403.816], [287.085, -134.236], [16, 423.816], [-384.256, 61.009]],
-    //                 //     "c": true
-    //                 //   }]
-    //                 // },
-    //                 // {
-    //                 //   "t": 184.14453125, "s": [{
-    //                 //     "i": [[-149.015, 0], [84.908, -122.459], [148.868, 6.642], [129.816, 152]],
-    //                 //     "o": [[149.016, 0], [-81.817, 118], [-220, -9.816], [-96.776, -113.314]],
-    //                 //     "v": [[-42, -403.816], [381.817, -44], [16, 423.816], [-381.816, -2]],
-    //                 //     "c": true
-    //                 //   }]
-    //                 // }
-    //               ],
-    //               "ix": 2
-    //             }, "nm": "Path 1", "mn": "ADBE Vector Shape - Group", "hd": false
-    //           },
-    //           {
-    //             "ty": "st", "c": { "a": 0, "k": [1, 0.945097979377, 0.898038976333, 1], "ix": 3 }, "o": { "a": 0, "k": 100, "ix": 4 }, "w": { "a": 0, "k": 0, "ix": 5 }, "lc": 1, "lj": 1, "ml": 4, "bm": 0, "nm": "Stroke 1", "mn": "ADBE Vector Graphic - Stroke", "hd": false
-    //           },
-    //           {
-    //             "ty": "fl", "c": { "a": 0, "k": [0.533333333333, 0.870588235294, 0.949019607843, 1], "ix": 4 }, "o": { "a": 0, "k": 100, "ix": 5 }, "r": 1, "bm": 0, "nm": "Fill 1", "mn": "ADBE Vector Graphic - Fill", "hd": false
-    //           },
-    //           {
-    //             "ty": "tr",
-    //             "p": {
-    //               "a": 0, "k": [49.816, 11.816], "ix": 2
-    //             },
-    //             "a": {
-    //               "a": 0, "k": [0, 0], "ix": 1
-    //             },
-    //             "s": {
-    //               "a": 0, "k": [100, 100], "ix": 3
-    //             },
-    //             "r": {
-    //               "a": 0, "k": 0, "ix": 6
-    //             },
-    //             "o": {
-    //               "a": 0, "k": 100, "ix": 7
-    //             },
-    //             "sk": {
-    //               "a": 0, "k": 0, "ix": 4
-    //             },
-    //             "sa": {
-    //               "a": 0, "k": 0, "ix": 5
-    //             },
-    //             "nm": "Transform"
-    //           }
-    //         ],
-    //         "nm": "Ellipse 1", "np": 3, "cix": 2, "bm": 0, "ix": 1, "mn": "ADBE Vector Group", "hd": false
-    //       }], "ip": 0, "op": 722, "st": 0, "bm": 0
-    //     }], "markers": []
-    // };
-
-    // let min = -1 * Math.floor(Math.random() * 500);
-    // let max = Math.floor(Math.random() * 500);
-
-    // result.layers[0].shapes[0].it[0].ks?.k.map((k) => {
-    //   let x = Math.floor(Math.random() * (max - min + 1) + min);
-    //   let y = Math.floor(Math.random() * (max - min + 1) + min);
-    //   console.log(x, y, min, max)
-    //   // k.s[0].v.map((v) => {
-    //   //   v[0] = v[0] + x;
-    //   //   v[1] = v[1] + y;
-    //   // })
-    // })
-
   }
+
+    const extractSVGPath = async () => {
+        let path = 'svg/blob3/blob (3).svg';
+        let parse = require('parse-svg-path')
+        let extract = require('extract-svg-path').parse
+        let load = require('load-svg')
+        let paths = null;
+        let points = [];
+        let point = [];
+        let cubic = new CubicBezierShape()
+
+        load(path, function(err: string, svg: string) {
+            paths = parse(extract(svg))
+
+            console.log('paths',paths)
+        
+            for(let i = 0; i < paths.length - 1; i++) {
+                if(points.length == 0) {
+                    if(paths[i][0] == 'M') {
+                        point.push([paths[0][1], paths[0][2]])
+                    }
+
+                    if(paths[i][0] == 'C') {
+                        point.push([paths[paths.length-2][3] - paths[0][1], paths[paths.length-2][4] - paths[0][2]])
+                        point.push([paths[i][1] - paths[0][1], paths[i][2] - paths[0][2]])
+                        points.push(point)
+                    }
+                    
+                }
+
+                else {
+
+                    
+                    point = [];
+                    point.push([paths[i-1][5], paths[i-1][6]])
+                    point.push([paths[i-1][3] - paths[i-1][5], paths[i-1][4] - paths[i-1][6]])
+                    point.push([paths[i][1] - paths[i-1][5], paths[i][2] - paths[i-1][6]])
+                    points.push(point)
+                }
+                
+                
+            }
+    
+            for(let x = 0; x < points.length; x++) {
+                cubic.addPoint(new Vector(points[x][0][0], points[x][0][1]), new Vector(points[x][1][0], points[x][1][1]), new Vector(points[x][2][0], points[x][2][1]))
+            }
+            cubic.setIsClosed(true)
+            console.log('cubic',cubic)
+            generateBlob(cubic)
+
+        })
+    }
+
 
   const checkBlob = async () => {
     console.log(data.lottie.animationData)
 
   }
+
+
   return (
     <div>
       <button onClick={() => { setSrc2(items[0]) }}>Animation One</button>
       <button onClick={() => { setSrc(items[1]) }}>Animation Two</button>
       <button onClick={generateBlob}>Generate Blob</button>
-      <button onClick={checkBlob}>Check Blob</button>
-      <button onClick={extractSVGPath}>Extract SVG</button>
+      {/* <button onClick={checkBlob}>Check Blob</button> */}
+      <button onClick={extractSVGPath}>Generate blob from SVG</button>
+
+
 
 
 
       <div style={{ display: "flex" }}>
         <div style={{ width: '50%' }} >
-          {/* <LottiePlayer
-            renderer="svg"
-            lottieRef={(instance: any) => {
-              console.log(instance.animationData)
-            }}
-            src={src2} loop autoplay >
-            <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
-          </LottiePlayer> */}
           <LottiePlayer
             renderer="svg"
-            // lottieRef={(instance) => {
-            //   setData({ lottie: instance, dom: lottieRef.current?.container?.innerHTML });
-            // }}
+    
             src={src} loop autoplay controls >
             <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
           </LottiePlayer>
         </div>
         <div style={{ width: '50%' }}>
-          {/* <pre>{JSON.stringify(data.lottie, getCircularReplacer(), 2)}</pre> */}
         </div>
       </div>
     </div>
   )
 }
 
-const extractSVGPath = () => {
-    var parse = require('parse-svg-path')
-    var extract = require('extract-svg-path').parse
-    var load = require('load-svg')
-
-    load('svg/bc1.svg', function(err, svg) {
-        var paths = parse(extract(svg))
-        console.log(paths)
-    })
-
-}
 
 export default Home
