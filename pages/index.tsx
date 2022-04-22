@@ -6,8 +6,9 @@ import { LottiePlugin } from '@lottiefiles/toolkit-plugin-lottie';
 import { Player as LottiePlayer, Controls } from '@lottiefiles/react-lottie-player';
 import { useRef, useState } from 'react';
 import { verify } from 'crypto';
-const RandomGenerator = require('random-points-generator');
+import Image from 'next/image';
 
+const RandomGenerator = require('random-points-generator');
 
 export interface LottieData {
   lottie?: any;
@@ -53,7 +54,9 @@ const Home: NextPage = () => {
   const [data, setData] = useState<LottieData>({});
   const [src, setSrc] = useState<any>();
   const [src2, setSrc2] = useState<any>();
+  const [visible, setVisible] = useState<any>(true);
   const lottieRef: any = useRef();
+  const blob1 = [ '/blob1/blob1.svg', '/blob1/blob2.svg', '/blob1/blob3.svg', '/blob1/blob4.svg', '/blob1/blob5.svg' ]
 
   const items = ['https://assets2.lottiefiles.com/packages/lf20_dt9nmo7x.json',
     'https://assets2.lottiefiles.com/private_files/lf30_gfxmthf0.json']
@@ -192,6 +195,7 @@ const Home: NextPage = () => {
         console.log(JSON.parse(blob as any))
 
         setSrc(blob);
+        // setVisible(true);
   }
 
   const extractPath = () => {
@@ -264,25 +268,51 @@ const Home: NextPage = () => {
           className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Generate sorted blob
-        </button><button
-          onClick={() => extractPath()}
+        </button>
+        {/* <button
+          onClick={() => {extractPath();   setVisible(false);}}
+          type="button"
+          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        > */}
+        <button
+          onClick={() => {setVisible(false);}}
           type="button"
           className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Generate blob from SVG
         </button>
       </div>
-   
 
-      <div style={{ width: '500px', margin: 'auto' }}>
+      {!visible && (
+           <div style={{ width: '500px', margin: 'auto' }}>
+               <p className="my-5">Please select a few SVGs from below (maximum of 5)</p>
+               
+               <Image src="/svg/blob/blob1.svg" width={200} height={200} alt='svg' />
+                 <div>
+                     {blob1.map((blob:string, index:number) => (
+                        <div key={index} className="border"><Image src="/svg/bc1.svg" width={200} height={200} alt='svg' /></div>
+
+                     ))}
+
+                    
+                 </div>
+            </div>
+
+         
+
+      )}
+
+        {visible && (
+            <div style={{ width: '500px', margin: 'auto' }}>
         <LottiePlayer
           renderer="svg"
           style={{ height: "500px" }}
           src={src} loop autoplay controls >
           <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
         </LottiePlayer>
-      </div>
-     
+      </div>)}
+      
+      {visible && (
       <div className="mt-6">
         <button
           onClick={() => saveBlob()}
@@ -291,8 +321,7 @@ const Home: NextPage = () => {
         >
           Download lottie
         </button>
-      </div>
-   
+      </div>)}
     </div>
   )
 }
@@ -300,6 +329,7 @@ const Home: NextPage = () => {
 
 
 const extractSVGPath = () => {
+
     var parse = require('parse-svg-path')
     var extract = require('extract-svg-path').parse
     var load = require('load-svg')
