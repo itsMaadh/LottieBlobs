@@ -201,9 +201,9 @@ const Home: NextPage = () => {
 
         fill.setColor(new Color(136, 222, 242));
 
-        fill.color.setValueAtKeyFrame(Color.from('red'), 50);
-        fill.color.setValueAtKeyFrame(Color.from('grey'), 100);
-        fill.color.setValueAtKeyFrame(Color.from('green'), 150);
+        // fill.color.setValueAtKeyFrame(Color.from('red'), 50);
+        // fill.color.setValueAtKeyFrame(Color.from('grey'), 100);
+        // fill.color.setValueAtKeyFrame(Color.from('green'), 150);
 
         const blob = await toolkit.export('com.lottiefiles.lottie', { scene });
         console.log(JSON.parse(blob as any))
@@ -260,7 +260,8 @@ const Home: NextPage = () => {
             cubic.addPoint(new Vector(points[x][0][0], points[x][0][1]), new Vector(points[x][1][0], points[x][1][1]), new Vector(points[x][2][0], points[x][2][1]))
         }
         cubic.setIsClosed(true)
-        setCombined(combined.concat(cubic));
+
+        setCombined(combined => [...combined, cubic]);
 
         console.log('combined', combined)
         if(combined.length == 5) {
@@ -277,10 +278,10 @@ const Home: NextPage = () => {
 
   const selectedSVG = (index:number) => {
     
-    let chosen = selected;
+
 
     if(selected.length < 5) {
-        setSelected(selected.concat(index))
+        setSelected(selected => [...selected, index])
     }
 
     console.log('selected', selected)
@@ -289,8 +290,7 @@ const Home: NextPage = () => {
         console.log('selected 5')
 
         selected.map(svg => {
-            let path = extractPath(blob1[svg])
-            console.log('extracted path:', path)
+            extractPath(blob1[svg])
         })
         
     }
@@ -313,13 +313,7 @@ const Home: NextPage = () => {
           className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Generate sorted blob
-        </button>
-        {/* <button
-          onClick={() => {extractPath();   setVisible(false);}}
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        > */}
-        <button
+        </button><button
           onClick={() => {setVisible(false);}}
           type="button"
           className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
