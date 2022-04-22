@@ -55,9 +55,11 @@ const Home: NextPage = () => {
   const [src, setSrc] = useState<any>();
   const [src2, setSrc2] = useState<any>();
   const [visible, setVisible] = useState<any>(true);
+  const [selected, setSelected] = useState<any>([]);
+  const [combined, setCombined] = useState<any>([]);
   const lottieRef: any = useRef();
-  const blob1 = [ '/blob1/blob1.svg', '/blob1/blob2.svg', '/blob1/blob3.svg', '/blob1/blob4.svg', '/blob1/blob5.svg' ]
-
+  const blob1 = [ '/blob1/blob1.svg', '/blob1/blob2.svg', '/blob1/blob3.svg', '/blob1/blob4.svg', '/blob1/blob5.svg',
+  '/blob2/blob1.svg', '/blob2/blob2.svg', '/blob2/blob3.svg', '/blob2/blob4.svg', '/blob2/blob5.svg' ]
   const items = ['https://assets2.lottiefiles.com/packages/lf20_dt9nmo7x.json',
     'https://assets2.lottiefiles.com/private_files/lf30_gfxmthf0.json']
 
@@ -158,19 +160,21 @@ const Home: NextPage = () => {
     console.log(data.lottie.animationData)
   }
 
-  const generateBlobFromSVG = async (cubicGenerated) => {
+  const generateBlobFromSVG = async () => {
         //generateBlob
+        const frameLength = 42;
+        const frames = 6;
         const scene = toolkit
         .createScene({})
         .setIs3D(false)
         .setName('myLottieAnimation')
         .setSize(new Size(1080, 1080));
-        scene.timeline.setFrameRate(24).setStartAndEndFrame(0, 184);
+        scene.timeline.setFrameRate(24).setStartAndEndFrame(0, frames * frameLength);
 
         const shapeLayer = scene
         .createShapeLayer()
         .setName('Layer 1')
-        .setStartAndEndFrame(0, 184)
+        .setStartAndEndFrame(0, frames * frameLength)
         .setId('layer_1')
         .setHeight(1080)
         .setWidth(1080)
@@ -180,8 +184,18 @@ const Home: NextPage = () => {
         const group = shapeLayer.createGroupShape()
         const pathShape = group.createPathShape()
 
-        pathShape.shape
-        .setValue(cubicGenerated)
+        combined.map((combine, i) => {
+            if (i === 0) {
+              pathShape.shape.setValue(combine)
+            } else {
+              pathShape.shape.setValueAtKeyFrame(combine, i * frameLength)
+            }
+          })  
+
+        pathShape.shape.setValueAtKeyFrame(combined[0], frames * frameLength)
+
+        // pathShape.shape
+        // .setValue(cubicGenerated)
 
         const fill = group.createFillShape();
 
@@ -195,11 +209,15 @@ const Home: NextPage = () => {
         console.log(JSON.parse(blob as any))
 
         setSrc(blob);
-        // setVisible(true);
+
+        // setCombined(combined.concat(blob));
+
+        // console.log('combined', combined)
+        setVisible(true);
   }
 
-  const extractPath = () => {
-    let path = 'svg/blob1/blob.svg';
+  const extractPath = (chosen) => {
+    let path = 'svg' + chosen;
     let parse = require('parse-svg-path')
     let extract = require('extract-svg-path').parse
     let load = require('load-svg')
@@ -242,14 +260,41 @@ const Home: NextPage = () => {
             cubic.addPoint(new Vector(points[x][0][0], points[x][0][1]), new Vector(points[x][1][0], points[x][1][1]), new Vector(points[x][2][0], points[x][2][1]))
         }
         cubic.setIsClosed(true)
+        setCombined(combined.concat(cubic));
 
-        generateBlobFromSVG(cubic);
+        console.log('combined', combined)
+        if(combined.length == 5) {
+            generateBlobFromSVG();
+        }
+       
         
         
     })
 
 
   
+  }
+
+  const selectedSVG = (index:number) => {
+    
+    let chosen = selected;
+
+    if(selected.length < 5) {
+        setSelected(selected.concat(index))
+    }
+
+    console.log('selected', selected)
+   
+    if(selected.length == 5) {
+        console.log('selected 5')
+
+        selected.map(svg => {
+            let path = extractPath(blob1[svg])
+            console.log('extracted path:', path)
+        })
+        
+    }
+
   }
 
   return (
@@ -287,10 +332,10 @@ const Home: NextPage = () => {
            <div style={{ width: '500px', margin: 'auto' }}>
                <p className="my-5">Please select a few SVGs from below (maximum of 5)</p>
                
-               <Image src="/svg/blob/blob1.svg" width={200} height={200} alt='svg' />
-                 <div>
+
+                 <div className="flex flex-wrap">
                      {blob1.map((blob:string, index:number) => (
-                        <div key={index} className="border"><Image src="/svg/bc1.svg" width={200} height={200} alt='svg' /></div>
+                        <div onClick={() => selectedSVG(index)} key={index} className="m-3 border"><Image src={'/svg/' + blob} width={200} height={200} alt='svg' /></div>
 
                      ))}
 
@@ -326,19 +371,5 @@ const Home: NextPage = () => {
   )
 }
 
-
-
-const extractSVGPath = () => {
-
-    var parse = require('parse-svg-path')
-    var extract = require('extract-svg-path').parse
-    var load = require('load-svg')
-
-    load('svg/bc1.svg', function(err, svg) {
-        var paths = parse(extract(svg))
-        console.log(paths)
-    })
-
-}
 
 export default Home
