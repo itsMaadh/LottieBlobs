@@ -63,8 +63,6 @@ const Home: NextPage = () => {
 
   toolkit.addPlugin(lottiePlugin);
 
-
-
   /*  generate random blob  */
   const generateBlob = async (sorted: boolean) => {
 
@@ -157,6 +155,99 @@ const Home: NextPage = () => {
     console.log(data.lottie.animationData)
   }
 
+  const generateBlobFromSVG = async (cubicGenerated) => {
+        //generateBlob
+        const scene = toolkit
+        .createScene({})
+        .setIs3D(false)
+        .setName('myLottieAnimation')
+        .setSize(new Size(1080, 1080));
+        scene.timeline.setFrameRate(24).setStartAndEndFrame(0, 184);
+
+        const shapeLayer = scene
+        .createShapeLayer()
+        .setName('Layer 1')
+        .setStartAndEndFrame(0, 184)
+        .setId('layer_1')
+        .setHeight(1080)
+        .setWidth(1080)
+        .setAnchor(new Vector(49.816, 11.816))
+        .setPosition(new Vector(543, 523))
+
+        const group = shapeLayer.createGroupShape()
+        const pathShape = group.createPathShape()
+
+        pathShape.shape
+        .setValue(cubicGenerated)
+
+        const fill = group.createFillShape();
+
+        fill.setColor(new Color(136, 222, 242));
+
+        fill.color.setValueAtKeyFrame(Color.from('red'), 50);
+        fill.color.setValueAtKeyFrame(Color.from('grey'), 100);
+        fill.color.setValueAtKeyFrame(Color.from('green'), 150);
+
+        const blob = await toolkit.export('com.lottiefiles.lottie', { scene });
+        console.log(JSON.parse(blob as any))
+
+        setSrc(blob);
+  }
+
+  const extractPath = () => {
+    let path = 'svg/blob1/blob.svg';
+    let parse = require('parse-svg-path')
+    let extract = require('extract-svg-path').parse
+    let load = require('load-svg')
+    let paths = null;
+    let points = [];
+    let point = [];
+    let cubic = new CubicBezierShape()
+
+    load(path, function(err: string, svg: string) {
+        paths = parse(extract(svg))
+
+        console.log('paths',paths)
+
+        for(let i = 0; i < paths.length - 1; i++) {
+            if(points.length == 0) {
+                if(paths[i][0] == 'M') {
+                    point.push([paths[0][1], paths[0][2]])
+                }
+
+                if(paths[i][0] == 'C') {
+                    point.push([paths[paths.length-2][3] - paths[0][1], paths[paths.length-2][4] - paths[0][2]])
+                    point.push([paths[i][1] - paths[0][1], paths[i][2] - paths[0][2]])
+                    points.push(point)
+                }
+
+            }
+
+            else {
+
+
+                point = [];
+                point.push([paths[i-1][5], paths[i-1][6]])
+                point.push([paths[i-1][3] - paths[i-1][5], paths[i-1][4] - paths[i-1][6]])
+                point.push([paths[i][1] - paths[i-1][5], paths[i][2] - paths[i-1][6]])
+                points.push(point)
+            }
+        }
+
+        for(let x = 0; x < points.length; x++) {
+            cubic.addPoint(new Vector(points[x][0][0], points[x][0][1]), new Vector(points[x][1][0], points[x][1][1]), new Vector(points[x][2][0], points[x][2][1]))
+        }
+        cubic.setIsClosed(true)
+
+        generateBlobFromSVG(cubic);
+        
+        
+    })
+
+
+  
+  }
+
   return (
     <div className="text-center">
       <p className="mt-4 text-sm text-gray-500">Some random shit</p>
@@ -173,8 +264,16 @@ const Home: NextPage = () => {
           className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Generate sorted blob
+        </button>  <button
+          onClick={() => extractPath()}
+          type="button"
+          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Generate blob from SVG
         </button>
       </div>
+   
+
       <div style={{ width: '500px', margin: 'auto' }}>
         <LottiePlayer
           renderer="svg"
@@ -183,6 +282,7 @@ const Home: NextPage = () => {
           <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
         </LottiePlayer>
       </div>
+     
       <div className="mt-6">
         <button
           onClick={() => saveBlob()}
@@ -192,9 +292,12 @@ const Home: NextPage = () => {
           Download lottie
         </button>
       </div>
+   
     </div>
   )
 }
+
+
 
 const extractSVGPath = () => {
     var parse = require('parse-svg-path')
