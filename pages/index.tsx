@@ -1,305 +1,223 @@
-import type { NextPage } from 'next'
-import { Color, Size, TOOLKIT_GENERATOR, Toolkit as ToolkitJS, Vector, Scene, Scalar, BezierInterpolator, CubicBezierShape } from '@lottiefiles/toolkit-js';
+import { NextPage } from "next"
+import { useState } from "react";
+import {
+    Color, Size, TOOLKIT_GENERATOR,
+    Toolkit as ToolkitJS, Vector, Scene, Scalar, BezierInterpolator, CubicBezierShape
+} from '@lottiefiles/toolkit-js';
 import { LottiePlugin } from '@lottiefiles/toolkit-plugin-lottie';
 import { Player as LottiePlayer, Controls } from '@lottiefiles/react-lottie-player';
-import { SvgImportOptions, SvgPlugin } from '@lottiefiles/toolkit-plugin-svg';
-import { parse } from 'svg-parser';
-var parseSVG = require('svg-path-parser');
-import { useRef, useState } from 'react';
-const RandomGenerator = require('random-points-generator');
 import * as blobs2 from "blobs/v2";
-export interface LottieData {
-  lottie?: any;
-  dom?: any;
-}
 
-const centroid = (points: [[number, number]]) => {
-  if (typeof points === 'undefined') {
-    return [];
-  }
 
-  let dimensions = points[0].length;
-  let accumulation = points.reduce((acc, point) => {
-    point.forEach((dimension, idx) => {
-      acc[idx] += dimension;
-    });
-
-    return acc;
-  }, Array(dimensions).fill(0));
-
-  return accumulation.map(dimension => dimension / points.length);
-}
-
-const sortPoints = (points: any) => {
-  var radianidx: any = [];
-
-  let c = centroid(points);
-
-  points.map((point: any, i: any) => {
-    let v = [point[0] - c[0], point[1] - c[1]];
-    let r = Math.atan2(v[1], v[0]);
-    radianidx.push([i, r]);
-  });
-  radianidx.sort(function (a: any, b: any) {
-    return b[1] - a[1];
-  });
-
-  return radianidx.map((idx: any) => points[idx[0]]);
-};
+var load = require('load-svg')
+let parse = require('parse-svg-path')
+let extract = require('extract-svg-path').parse
 
 const Home: NextPage = () => {
-  const [data, setData] = useState<LottieData>({});
-  const [src, setSrc] = useState<any>();
-  const [src2, setSrc2] = useState<any>();
-  const [svg, setSvg] = useState();
-  const lottieRef: any = useRef();
-
-  const items = ['https://assets2.lottiefiles.com/packages/lf20_dt9nmo7x.json',
-    'https://assets2.lottiefiles.com/private_files/lf30_gfxmthf0.json']
-
-  const toolkit = new ToolkitJS();
-
-  toolkit.addPlugin(new LottiePlugin());
-  // toolkit.addPlugin(new SvgPlugin());
-
-  const generateFromSVG = async () => {
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [src, setSrc] = useState<any>();
+    const [randomSvg, setRandomSvg] = useState<any>();
 
 
-    const frames = 1;
-    const frameLength = 42;
-    const curves = [];
-
-    for (let i = 0; i < frames; i++) {
-      const svgString = blobs2.svg(
-        {
-          seed: Math.random(),
-          extraPoints: 2,
-          randomness: 15,
-          size: 300,
-        },
-        {
-          fill: "black", // 🚨 NOT SANITIZED 
-        },
-      );
-      setSvg(svgString as any)
-      const parsed = parse(svgString).children[0] as any;
-
-      const d = parsed.children[0].properties.d;
-      const darray = parseSVG(d);
-      const curve = new CubicBezierShape()
-
-      darray.map((p: any, j: any) => {
-        if (j === 0) {
-          curve.addPoint(
-            new Vector(p.x, p.y),
-            new Vector(p.x - darray[j + 1].x1, p.y - darray[j + 1].y1)
-          )
-        } else if (j === darray.length - 1) {
-          curve.addPoint(new Vector(p.x, p.y))
-        } else {
-          curve.addPoint(
-            new Vector(p.x, p.y),
-            new Vector(p.x - darray[j + 1].x1, p.y - darray[j + 1].y1),
-            new Vector(p.x - p.x2, p.y - p.y2),
-
-          )
-
+    const changeHandler = (event: any) => {
+        let fileURLs: any = [];
+        for (let index = 0; index < event.target.files.length; index++) {
+            fileURLs.push(URL.createObjectURL(event.target.files[index]));
         }
-
-      })
-      curve.setIsClosed(true);
-      curves.push(curve);
+        setSelectedFiles(fileURLs)
     }
 
-    const scene = toolkit
-      .createScene({})
-      .setIs3D(false)
-      .setName('myLottieAnimation')
-      .setSize(new Size(300, 300));
-    scene.timeline.setFrameRate(24).setStartAndEndFrame(0, frames * frameLength);
+    const handleSubmission = async () => {
+        if (selectedFiles && selectedFiles.length) {
+            let svgPaths = await Promise.all(selectedFiles.map(async (selectedFile: any) => {
+                return await getSVGPathInfo(selectedFile)
+            }))
+            let bezierCurves = await Promise.all(svgPaths.map(async (pathArray) => {
+                return await getBezierCurve(pathArray)
+            }))
+            generateBlobFromSVG(bezierCurves)
+        }
+    };
 
-    const shapeLayer = scene
-      .createShapeLayer()
-      .setName('Layer 1')
-      .setStartAndEndFrame(0, frames * frameLength)
-      .setId('layer_1')
-      .setHeight(300)
-      .setWidth(300)
-      .setAnchor(new Vector(0, 0))
-      .setPosition(new Vector(0, 0))
-
-    const group = shapeLayer.createGroupShape()
-    const pathShape = group.createPathShape()
-
-    curves.map((curve, i) => {
-      if (i === 0) {
-        pathShape.shape.setValue(curve)
-      } else {
-        pathShape.shape.setValueAtKeyFrame(curve, i * frameLength)
-      }
-    })
-
-    // pathShape.shape.setValueAtKeyFrame(curves[0], frames * frameLength)
-
-
-    group.createFillShape().setColor(new Color(136, 222, 242));
-
-    const blob = await toolkit.export('com.lottiefiles.lottie', { scene });
-    console.log(JSON.parse(blob as any))
-
-    setSrc(blob);
-
-
-    // // setSvg(svgString as any);
-    // const options: SvgImportOptions = {
-    //   svgString,
-    //   importOptions: {
-    //     parsingOptions: {
-    //       dpi: 72, endFrame: 90, frameRate: 25,
-    //       screenSize: new Size(1920, 1080), startFrame: 0
-    //     },
-    //     sceneOptions: {
-    //       author: 'wikipedia',
-    //       backgroundColor: '#ffffff',
-    //       description: 'Tiger',
-    //       keywords: [],
-    //       name: 'Tiger',
-    //     },
-    //   },
-    // };
-
-    // let s = await toolkit.import('com.lottiefiles.svg', options);
-    // console.log(s)
-  }
-
-  /*  generate random blob  */
-  const generateBlob = async (sorted: boolean) => {
-
-
-    const vertices = 5;
-    const frames = 6;
-    const frameLength = 42;
-    const curves = [];
-
-    for (let i = 0; i < frames; i++) {
-      const generatedGeometry = RandomGenerator.random(vertices, { bbox: [-500, -500, 500, 500] });
-      let points = generatedGeometry.features.map((p: any) => { return p.geometry.coordinates });
-      points = sorted ? sortPoints(points) : points;
-      const curve = new CubicBezierShape()
-      points.map((p: any) => {
-        curve.addPoint(
-          new Vector(p[0], p[1]),
-          // new Vector(p[0] / 2, p[1] / 3),
-          // new Vector(p[0] / 3, p[1] / 2)
-        )
-      })
-      curve.setIsClosed(true);
-      curves.push(curve);
+    const getSVGPathInfo = async (file: any) => {
+        return new Promise((resolve, reject) => {
+            load(file, (err: any, svg: any) => {
+                if (err) {
+                    reject(null)
+                } else {
+                    setRandomSvg(extract(svg));
+                    resolve(parse(extract(svg)))
+                }
+            })
+        })
     }
 
-    const scene = toolkit
-      .createScene({})
-      .setIs3D(false)
-      .setName('myLottieAnimation')
-      .setSize(new Size(1080, 1080));
-    scene.timeline.setFrameRate(24).setStartAndEndFrame(0, frames * frameLength);
+    const getBezierCurve = async (paths: any) => {
+        let points = [];
+        let point = [];
+        let cubic = new CubicBezierShape()
+        for (let i = 0; i < paths.length - 1; i++) {
+            if (points.length == 0) {
+                if (paths[i][0] == 'M') {
+                    point.push([paths[0][1], paths[0][2]])
+                }
 
-    const shapeLayer = scene
-      .createShapeLayer()
-      .setName('Layer 1')
-      .setStartAndEndFrame(0, frames * frameLength)
-      .setId('layer_1')
-      .setHeight(1080)
-      .setWidth(1080)
-      .setAnchor(new Vector(49.816, 11.816))
-      .setPosition(new Vector(543, 523))
+                if (paths[i][0] == 'C') {
+                    point.push([paths[paths.length - 2][3] - paths[0][1], paths[paths.length - 2][4] - paths[0][2]])
+                    point.push([paths[i][1] - paths[0][1], paths[i][2] - paths[0][2]])
+                    points.push(point)
+                }
 
-    const group = shapeLayer.createGroupShape()
-    const pathShape = group.createPathShape()
+            } else if (paths[i][0] == 'C') {
+                point = [];
+                point.push([paths[i - 1][5], paths[i - 1][6]])
+                point.push([paths[i - 1][3] - paths[i - 1][5], paths[i - 1][4] - paths[i - 1][6]])
+                point.push([paths[i][1] - paths[i - 1][5], paths[i][2] - paths[i - 1][6]])
+                points.push(point)
+            }
+        }
+        for (let x = 0; x < points.length; x++) {
+            cubic.addPoint(
+                new Vector(points[x][0][0], points[x][0][1]),
+                new Vector(points[x][1][0], points[x][1][1]),
+                new Vector(points[x][2][0], points[x][2][1])
+            )
+        }
+        cubic.setIsClosed(true)
+        return cubic;
+    }
 
-    curves.map((curve, i) => {
-      if (i === 0) {
-        pathShape.shape.setValue(curve)
-      } else {
-        pathShape.shape.setValueAtKeyFrame(curve, i * frameLength)
-      }
-    })
+    const generateBlobFromSVG = async (curves: any) => {
+        const toolkit = new ToolkitJS();
+        const lottiePlugin = new LottiePlugin();
 
-    pathShape.shape.setValueAtKeyFrame(curves[0], frames * frameLength)
+        toolkit.addPlugin(lottiePlugin);
 
 
-    group.createFillShape().setColor(new Color(136, 222, 242));
+        const frameLength = 42;
+        const frames = 6;
+        const scene = toolkit
+            .createScene({})
+            .setIs3D(false)
+            .setName('myLottieAnimation')
+            .setSize(new Size(1080, 1080));
+        scene.timeline.setFrameRate(24).setStartAndEndFrame(0, frames * frameLength);
 
-    const blob = await toolkit.export('com.lottiefiles.lottie', { scene });
-    console.log(JSON.parse(blob as any))
+        const shapeLayer = scene
+            .createShapeLayer()
+            .setName('Layer 1')
+            .setStartAndEndFrame(0, frames * frameLength)
+            .setId('layer_1')
+            .setHeight(1080)
+            .setWidth(1080)
+            // .setAnchor(new Vector(49.816, 11.816))
+            .setPosition(new Vector(540, 540))
 
-    setSrc(blob);
+        const group = shapeLayer.createGroupShape()
+        const pathShape = group.createPathShape()
 
-  }
+        curves.map((curve: any, i: any) => {
+            if (i === 0) {
+                pathShape.shape.setValue(curve)
+            } else {
+                pathShape.shape.setValueAtKeyFrame(curve, i * frameLength)
+            }
+        })
 
-  const saveBlob = async () => {
-    const fileName = `random-bLottie.json`;
-    const json = src;
-    const blob = new Blob([json], { type: `application/ json` });
-    const href = await URL.createObjectURL(blob);
-    const link = document.createElement(`a`);
-    link.href = href;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
+        pathShape.shape.setValueAtKeyFrame(curves[0], frames * frameLength)
 
-  const checkBlob = async () => {
-    console.log(data.lottie.animationData)
-  }
 
-  return (
-    <div className="text-center">
-      {svg && <div dangerouslySetInnerHTML={{ __html: svg }}></div>}
-      <p className="mt-4 text-sm text-gray-500">Some random shit</p>
-      <div className="mt-6">
-        <button
-          onClick={() => generateBlob(false)}
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Generate unsorted blob
-        </button>
-        <button
-          onClick={() => generateBlob(true)}
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Generate sorted blob
-        </button>
-        <button
-          onClick={() => generateFromSVG()}
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Generate from SVG
-        </button>
-      </div>
-      <div style={{ width: '500px', margin: 'auto' }}>
-        <LottiePlayer
-          renderer="svg"
-          style={{ height: "500px" }}
-          src={src} loop autoplay controls >
-          <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
-        </LottiePlayer>
-      </div>
-      <div className="mt-6">
-        <button
-          onClick={() => saveBlob()}
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Download lottie
-        </button>
-      </div>
-    </div>
-  )
+        const fill = group.createFillShape();
+
+        fill.setColor(new Color(136, 222, 242));
+
+        // fill.color.setValueAtKeyFrame(Color.from('red'), 50);
+        // fill.color.setValueAtKeyFrame(Color.from('grey'), 100);
+        // fill.color.setValueAtKeyFrame(Color.from('green'), 150);
+
+        const blob = await toolkit.export('com.lottiefiles.lottie', { scene });
+
+        setSrc(blob);
+    }
+
+    const generateRandomBlobs = async () => {
+        const randomSVGs = []
+
+        for (let i = 0; i < 6; i++) {
+            const svgString = blobs2.svg({ seed: Math.random(), extraPoints: 2, randomness: 15, size: 500, }, { fill: "black" });
+            randomSVGs.push(svgString)
+        }
+        setRandomSvg(randomSVGs[0] as any)
+
+        let svgPaths = await Promise.all(randomSVGs.map(async (randomSVG: any) => {
+            return parse(extract(randomSVG))
+        }))
+
+        let bezierCurves = await Promise.all(svgPaths.map(async (pathArray) => {
+            return await getBezierCurve(pathArray)
+        }))
+        generateBlobFromSVG(bezierCurves)
+    }
+
+    const saveBlob = async () => {
+        const fileName = `random-bLottie.json`;
+        const json = src;
+        const blob = new Blob([json], { type: `application/ json` });
+        const href = await URL.createObjectURL(blob);
+        const link = document.createElement(`a`);
+        link.href = href;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+
+    return (<>
+
+        <div className="text-center">
+            {/* {randomSvg && <div dangerouslySetInnerHTML={{ __html: randomSvg }}></div>} */}
+            <p className="mt-4 text-sm text-gray-500">Some random shit</p>
+
+            <div className="mt-6">
+                <input type="file" multiple onChange={changeHandler} />
+
+                <button
+                    onClick={() => handleSubmission()}
+                    type="button"
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                    Submit files
+                </button>
+                <br />
+                <br />
+                <button
+                    onClick={() => generateRandomBlobs()}
+                    type="button"
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                    Generate random
+                </button>
+            </div>
+            <div style={{ width: '500px', margin: 'auto' }}>
+                <LottiePlayer
+                    renderer="svg"
+                    style={{ height: "500px" }}
+                    src={src} loop autoplay controls >
+                    <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
+                </LottiePlayer>
+            </div>
+            <div className="mt-6">
+                <button
+                    onClick={() => saveBlob()}
+                    type="button"
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                    Download lottie
+                </button>
+            </div>
+        </div>
+    </>)
 }
 
-export default Home
+export default Home;

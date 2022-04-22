@@ -16,15 +16,20 @@
     "@lottiefiles/toolkit-plugin-lottie": "0.5.2",
     "@lottiefiles/toolkit-plugin-svg": "0.0.2",
     "@tailwindcss/forms": "0.5.0",
+    "axios": "0.26.1",
     "blobs": "2.2.1-beta.1",
+    "extract-svg-path": "2.1.0",
     "fs": "0.0.1-security",
+    "load-svg": "1.0.0",
     "next": "12.1.5",
+    "parse-svg-path": "0.1.2",
     "random-points-generator": "1.7.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-json-view": "1.21.3",
     "svg-parser": "2.0.4",
-    "svg-path-parser": "1.1.0"
+    "svg-path-parser": "1.1.0",
+    "svgson": "5.2.1"
   },
   "devDependencies": {
     "@types/node": "17.0.25",
