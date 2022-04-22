@@ -4,16 +4,19 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { Color, Size, TOOLKIT_GENERATOR, Toolkit as ToolkitJS, Vector, Scene, Scalar, BezierInterpolator, CubicBezierShape } from '@lottiefiles/toolkit-js';
 import { LottiePlugin } from '@lottiefiles/toolkit-plugin-lottie';
 import { Player as LottiePlayer, Controls } from '@lottiefiles/react-lottie-player';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { verify } from 'crypto';
 import Image from 'next/image';
 
 const RandomGenerator = require('random-points-generator');
 
+
+
 export interface LottieData {
   lottie?: any;
   dom?: any;
 }
+
 
 const centroid = (points: [[number, number]]) => {
   if (typeof points === 'undefined') {
@@ -67,6 +70,22 @@ const Home: NextPage = () => {
   const lottiePlugin = new LottiePlugin();
 
   toolkit.addPlugin(lottiePlugin);
+
+  useEffect(() => { // this hook will get called everytime when myArr has changed
+    // perform some action which will get fired everytime when myArr gets updated
+
+       if(selected.length == 5) {
+        selected.map(svg => {
+            extractPath(blob1[svg])
+        })
+
+        if(combined.length == 5) {
+            generateBlobFromSVG();
+        }
+        
+    }
+    }, [selected, combined])
+
 
   /*  generate random blob  */
   const generateBlob = async (sorted: boolean) => {
@@ -210,9 +229,6 @@ const Home: NextPage = () => {
 
         setSrc(blob);
 
-        // setCombined(combined.concat(blob));
-
-        // console.log('combined', combined)
         setVisible(true);
   }
 
@@ -228,8 +244,6 @@ const Home: NextPage = () => {
 
     load(path, function(err: string, svg: string) {
         paths = parse(extract(svg))
-
-        console.log('paths',paths)
 
         for(let i = 0; i < paths.length - 1; i++) {
             if(points.length == 0) {
@@ -261,15 +275,7 @@ const Home: NextPage = () => {
         }
         cubic.setIsClosed(true)
 
-        setCombined(combined => [...combined, cubic]);
-
-        console.log('combined', combined)
-        if(combined.length == 5) {
-            generateBlobFromSVG();
-        }
-       
-        
-        
+        setCombined(combined => [...combined, cubic]);        
     })
 
 
@@ -277,24 +283,13 @@ const Home: NextPage = () => {
   }
 
   const selectedSVG = (index:number) => {
-    
-
-
-    if(selected.length < 5) {
+    if(selected.length > 5) {
+        setSelected([]);
+        setCombined([]);
+    } else {
         setSelected(selected => [...selected, index])
     }
-
-    console.log('selected', selected)
-   
-    if(selected.length == 5) {
-        console.log('selected 5')
-
-        selected.map(svg => {
-            extractPath(blob1[svg])
-        })
-        
-    }
-
+      
   }
 
   return (
