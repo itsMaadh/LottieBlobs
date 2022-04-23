@@ -20,6 +20,11 @@ import { FivePoint } from "../components/svgs/five-point";
 import { Circle } from "../components/svgs/circle";
 import { Ellipse } from "../components/svgs/ellipse";
 import { ColorResult, HuePicker } from "react-color";
+import { Download } from "../components/svgs/download";
+import { SortDescending } from "../components/svgs/sort-descending";
+import { SortAscending } from "../components/svgs/sort-ascending";
+import { MinusCircle } from "../components/svgs/minus-circle";
+import { PlusCircle } from "../components/svgs/plus-circle";
 
 let load = require("load-svg");
 let parse = require("parse-svg-path");
@@ -176,7 +181,12 @@ const Home: NextPage = () => {
 
     for (let i = 0; i < frames; i++) {
       const svgString = blobs2.svg(
-        { seed: Math.random(), extraPoints: extraPoints, randomness, size: 500 },
+        {
+          seed: Math.random(),
+          extraPoints,
+          randomness,
+          size: 500,
+        },
         { fill: "black" }
       );
       randomSVGs.push(svgString);
@@ -216,7 +226,7 @@ const Home: NextPage = () => {
 
   return (
     <div className="container mx-auto max-h-screen md:px-2 md:pb-4">
-      <div className="my-5">
+      <div className="my-3">
         <Image
           src="/images/lottie-blobs.png"
           width={180}
@@ -226,21 +236,15 @@ const Home: NextPage = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
         <div className="md:col-span-2 border-2 border-dashed border-gray-400 rounded-xl px-36 bg-gray-100">
-          <LottiePlayer
-            renderer="svg"
-            src={src}
-            loop
-            autoplay
-            controls
-          >
+          <LottiePlayer renderer="svg" src={src} loop autoplay controls>
             <Controls
               visible={true}
               buttons={["play", "repeat", "frame", "debug"]}
             />
           </LottiePlayer>
         </div>
-        <div className="grid grid-rows-4 gap-6 h-full items-center">
-          <div className="py-4 shadow-2xl rounded-xl px-5">
+        <div className="grid grid-rows-6 gap-4 h-full items-center">
+          <div className="py-2 shadow-2xl rounded-xl px-5">
             <p className="font-bold text-gray-400 uppercase pb-3">
               Change Color
             </p>
@@ -253,10 +257,10 @@ const Home: NextPage = () => {
             </div>
           </div>
 
-          <div className="py-4 shadow-2xl rounded-xl px-5">
+          <div className="py-2 shadow-2xl rounded-xl px-5">
             <p className="font-bold text-gray-400 uppercase pb-3">Frames</p>
             <div className="flex">
-              5
+              <SortDescending className="h-8 w-8 mr-2" />
               <Slider
                 min={5}
                 max={10}
@@ -265,14 +269,16 @@ const Home: NextPage = () => {
                   setFrames(+event.target.value)
                 }
               />
-              10
+              <SortAscending className="h-8 w-8 ml-2" />
             </div>
           </div>
 
-          <div className="py-4 shadow-2xl rounded-xl px-5">
-            <p className="font-bold text-gray-400 uppercase pb-3">Frame length</p>
+          <div className="py-2 shadow-2xl rounded-xl px-5">
+            <p className="font-bold text-gray-400 uppercase pb-3">
+              Frame length
+            </p>
             <div className="flex">
-              10
+              <MinusCircle className="h-8 w-8 mr-2" />
               <Slider
                 min={10}
                 max={50}
@@ -281,11 +287,11 @@ const Home: NextPage = () => {
                   setFrameLength(+event.target.value)
                 }
               />
-              50
+              <PlusCircle className="h-8 w-8 ml-2" />
             </div>
           </div>
 
-          <div className="py-4 shadow-2xl rounded-xl px-5">
+          <div className="py-2 shadow-2xl rounded-xl px-5">
             <p className="font-bold text-gray-400 uppercase pb-3">Edges</p>
             <div className="flex">
               <ThreePoint className="h-8 w-8 mr-2" />
@@ -301,7 +307,7 @@ const Home: NextPage = () => {
             </div>
           </div>
 
-          <div className="py-4 shadow-2xl rounded-xl px-5">
+          <div className="py-2 shadow-2xl rounded-xl px-5">
             <p className="font-bold text-gray-400 uppercase pb-3">Curves</p>
             <div className="flex">
               <Circle className="h-8 w-8 mr-2" />
@@ -317,13 +323,29 @@ const Home: NextPage = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => saveBlob()}
-            type="button"
-            className="bg-teal-500 py-4 text-white font-bold tracking-wide rounded-md"
-          >
-            Download Lottie
-          </button>
+          <div className="grid grid-cols-2 gap-6">
+            <button
+              onClick={() => saveBlob()}
+              type="button"
+              className="bg-teal-500 py-4 text-white font-bold tracking-wide rounded-md"
+            >
+              <span className="flex justify-center">
+                <Download className="w-7 h-7 mr-2" />
+                .json
+              </span>
+            </button>
+
+            <button
+              onClick={() => saveBlob()}
+              type="button"
+              className="bg-teal-500 py-4 text-white font-bold tracking-wide rounded-md"
+            >
+              <span className="flex justify-center">
+                <Download className="w-7 h-7 mr-2" />
+                .Lottie
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
