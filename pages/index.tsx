@@ -19,6 +19,7 @@ import { ThreePoint } from "../components/svgs/three-point";
 import { FivePoint } from "../components/svgs/five-point";
 import { Circle } from "../components/svgs/circle";
 import { Ellipse } from "../components/svgs/ellipse";
+import { ColorResult, HuePicker } from "react-color";
 
 let load = require("load-svg");
 let parse = require("parse-svg-path");
@@ -29,6 +30,11 @@ const Home: NextPage = () => {
   const [points, setPoints] = useState(0);
   const [randomness, setRandomness] = useState(0);
   const [src, setSrc] = useState<any>();
+  const [color, setColor] = useState<{ r: number; b: number; g: number }>({
+    r: 25,
+    b: 215,
+    g: 217,
+  });
   const [randomSvg, setRandomSvg] = useState<any>();
 
   const changeHandler = (event: any) => {
@@ -153,7 +159,7 @@ const Home: NextPage = () => {
 
     const fill = group.createFillShape();
 
-    fill.setColor(new Color(136, 222, 242));
+    fill.setColor(new Color(color.r, color.g, color.b));
 
     // fill.color.setValueAtKeyFrame(Color.from('red'), 50);
     // fill.color.setValueAtKeyFrame(Color.from('grey'), 100);
@@ -205,10 +211,10 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     generateRandomBlobs();
-  }, [points, randomness]);
+  }, [points, randomness, color]);
 
   return (
-    <div className="container mx-auto max-h-screen">
+    <div className="container mx-auto max-h-screen md:px-2 md:pb-4">
       <div className="my-5">
         <Image
           src="/images/lottie-blobs.png"
@@ -217,8 +223,8 @@ const Home: NextPage = () => {
           alt="LottieBlobs Logo"
         />
       </div>
-      <div className="grid grid-cols-3 gap-10 items-center">
-        <div className="col-span-2 border-2 border-dashed border-gray-400 rounded-xl px-36 bg-gray-100">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
+        <div className="md:col-span-2 border-2 border-dashed border-gray-400 rounded-xl px-36 bg-gray-100">
           <LottiePlayer
             renderer="svg"
             style={{ height: "500px" }}
@@ -234,6 +240,19 @@ const Home: NextPage = () => {
           </LottiePlayer>
         </div>
         <div className="grid grid-rows-4 gap-6 h-full items-center">
+          <div className="py-4 shadow-2xl rounded-xl px-5">
+            <p className="font-bold text-gray-400 uppercase pb-3">
+              Change Color
+            </p>
+            <div className="pb-3">
+              <HuePicker
+                color={color}
+                onChangeComplete={(result: ColorResult) => setColor(result.rgb)}
+                width={"100%"}
+              />
+            </div>
+          </div>
+
           <div className="py-4 shadow-2xl rounded-xl px-5">
             <p className="font-bold text-gray-400 uppercase pb-3">Edges</p>
             <div className="flex">
