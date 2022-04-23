@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities; 
+@tailwind utilities;
+
+.lf-player-controls{
+    background-color: transparent !important;
+}
