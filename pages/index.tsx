@@ -39,6 +39,9 @@ const Home: NextPage = () => {
   const [frameLength, setFrameLength] = useState(50);
   const [randomness, setRandomness] = useState(20);
   const [src, setSrc] = useState<any>();
+  const [colorFixed, setColorFixed] = useState<any>(true);
+
+
   const [color, setColor] = useState<{ r: number; b: number; g: number }>({
     r: 25,
     b: 215,
@@ -156,9 +159,14 @@ const Home: NextPage = () => {
 
     fill.setColor(new Color(color.r, color.g, color.b));
 
-    // fill.color.setValueAtKeyFrame(Color.from('red'), 50);
-    // fill.color.setValueAtKeyFrame(Color.from('grey'), 100);
-    // fill.color.setValueAtKeyFrame(Color.from('green'), 150);
+    if (!colorFixed) {
+      curves.map((curve: any, i: any) => {
+        fill.color.setValueAtKeyFrame(new Color(
+          Math.floor(Math.random() * 255),
+          Math.floor(Math.random() * 255),
+          Math.floor(Math.random() * 255)), i * frameLength);
+      });
+    }
 
     const blob = await toolkit.export("com.lottiefiles.lottie", { scene });
 
@@ -168,6 +176,7 @@ const Home: NextPage = () => {
   const generateRandomBlobs = async () => {
     const randomSVGs = [];
 
+
     for (let i = 0; i < frames; i++) {
       const svgString = blobs2.svg(
         {
@@ -175,8 +184,7 @@ const Home: NextPage = () => {
           extraPoints,
           randomness,
           size: 500,
-        },
-        { fill: "black" }
+        }
       );
       randomSVGs.push(svgString);
     }
@@ -244,7 +252,8 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     generateRandomBlobs();
-  }, [frames, frameLength, extraPoints, randomness, color]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frames, frameLength, extraPoints, randomness, color, colorFixed]);
 
   return (
     <div className="container mx-auto max-h-screen px-4 md:px-2 md:pb-4">
@@ -267,7 +276,11 @@ const Home: NextPage = () => {
         </div>
         <div className="grid grid-rows-6 gap-4 h-full items-center">
           <div className="py-2 shadow-2xl rounded-xl px-5">
-            <p className="font-bold text-gray-400 uppercase pb-3">
+            <p className="font-bold text-gray-400 uppercase pb-3"
+              onClick={() => {
+                setColorFixed(!colorFixed)
+              }}
+            >
               Change Color
             </p>
             <div className="pb-3">
