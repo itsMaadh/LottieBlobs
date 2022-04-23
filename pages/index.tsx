@@ -27,8 +27,11 @@ let extract = require("extract-svg-path").parse;
 
 const Home: NextPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [points, setPoints] = useState(0);
-  const [randomness, setRandomness] = useState(0);
+  const [size, setSize] = useState(500);
+  const [extraPoints, setExtraPoints] = useState(0);
+  const [frames, setFrames] = useState(5);
+  const [frameLength, setFrameLength] = useState(10);
+  const [randomness, setRandomness] = useState(10);
   const [src, setSrc] = useState<any>();
   const [color, setColor] = useState<{ r: number; b: number; g: number }>({
     r: 25,
@@ -123,13 +126,11 @@ const Home: NextPage = () => {
 
     toolkit.addPlugin(lottiePlugin);
 
-    const frameLength = 42;
-    const frames = 6;
     const scene = toolkit
       .createScene({})
       .setIs3D(false)
       .setName("myLottieAnimation")
-      .setSize(new Size(1080, 1080));
+      .setSize(new Size(size, size));
     scene.timeline
       .setFrameRate(24)
       .setStartAndEndFrame(0, frames * frameLength);
@@ -139,10 +140,10 @@ const Home: NextPage = () => {
       .setName("Layer 1")
       .setStartAndEndFrame(0, frames * frameLength)
       .setId("layer_1")
-      .setHeight(1080)
-      .setWidth(1080)
-      // .setAnchor(new Vector(49.816, 11.816))
-      .setPosition(new Vector(540, 540));
+      .setHeight(size)
+      .setWidth(size)
+      // .setAnchor(new Vector(0.816, 0.816))
+      .setPosition(new Vector(0, 0));
 
     const group = shapeLayer.createGroupShape();
     const pathShape = group.createPathShape();
@@ -173,14 +174,14 @@ const Home: NextPage = () => {
   const generateRandomBlobs = async () => {
     const randomSVGs = [];
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < frames; i++) {
       const svgString = blobs2.svg(
-        { seed: Math.random(), extraPoints: points, randomness, size: 500 },
+        { seed: Math.random(), extraPoints: extraPoints, randomness, size: 500 },
         { fill: "black" }
       );
       randomSVGs.push(svgString);
     }
-    setRandomSvg(randomSVGs[0] as any);
+    // setRandomSvg(randomSVGs[0] as any);
 
     let svgPaths = await Promise.all(
       randomSVGs.map(async (randomSVG: any) => {
@@ -211,7 +212,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     generateRandomBlobs();
-  }, [points, randomness, color]);
+  }, [frames, frameLength, extraPoints, randomness, color]);
 
   return (
     <div className="container mx-auto max-h-screen md:px-2 md:pb-4">
@@ -227,7 +228,6 @@ const Home: NextPage = () => {
         <div className="md:col-span-2 border-2 border-dashed border-gray-400 rounded-xl px-36 bg-gray-100">
           <LottiePlayer
             renderer="svg"
-            style={{ height: "500px" }}
             src={src}
             loop
             autoplay
@@ -254,15 +254,47 @@ const Home: NextPage = () => {
           </div>
 
           <div className="py-4 shadow-2xl rounded-xl px-5">
+            <p className="font-bold text-gray-400 uppercase pb-3">Frames</p>
+            <div className="flex">
+              5
+              <Slider
+                min={5}
+                max={10}
+                value={frames}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setFrames(+event.target.value)
+                }
+              />
+              10
+            </div>
+          </div>
+
+          <div className="py-4 shadow-2xl rounded-xl px-5">
+            <p className="font-bold text-gray-400 uppercase pb-3">Frame length</p>
+            <div className="flex">
+              10
+              <Slider
+                min={10}
+                max={50}
+                value={frameLength}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setFrameLength(+event.target.value)
+                }
+              />
+              50
+            </div>
+          </div>
+
+          <div className="py-4 shadow-2xl rounded-xl px-5">
             <p className="font-bold text-gray-400 uppercase pb-3">Edges</p>
             <div className="flex">
               <ThreePoint className="h-8 w-8 mr-2" />
               <Slider
                 min={0}
                 max={10}
-                value={points}
+                value={extraPoints}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setPoints(+event.target.value)
+                  setExtraPoints(+event.target.value)
                 }
               />
               <FivePoint className="h-8 w-8 ml-2" />
