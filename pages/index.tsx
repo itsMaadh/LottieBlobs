@@ -25,6 +25,7 @@ import { SortDescending } from "../components/svgs/sort-descending";
 import { SortAscending } from "../components/svgs/sort-ascending";
 import { MinusCircle } from "../components/svgs/minus-circle";
 import { PlusCircle } from "../components/svgs/plus-circle";
+import axios from "axios";
 
 let load = require("load-svg");
 let parse = require("parse-svg-path");
@@ -198,7 +199,7 @@ const Home: NextPage = () => {
   const saveBlob = async () => {
     const fileName = `random-bLottie.json`;
     const json = src;
-    const blob = new Blob([json], { type: `application/ json` });
+    const blob = new Blob([json], { type: `application/json` });
     const href = await URL.createObjectURL(blob);
     const link = document.createElement(`a`);
     link.href = href;
@@ -207,6 +208,39 @@ const Home: NextPage = () => {
     link.click();
     document.body.removeChild(link);
   };
+
+  const saveAsDotLottie = async () => {
+    const uploadUrl = `https://api.lottiefiles.com/v2/temp-file-upload`;
+    const convertUrl = `https://api.dotlottie.io/todotlottie`;
+    const downloadBaseUrl = `https://lottie-editor-api-temp.s3.amazonaws.com/`
+
+    const json = src;
+    try {
+      const response = await axios.post(uploadUrl, { payload: JSON.stringify(json) }, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      const json_url = await response.data.payload.data_file;
+
+      const response2 = await axios.post(convertUrl, { url: json_url }, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      const dotlottie = await response2.data.file;
+
+      const fileName = `random-bLottie.lottie`;
+      const link = document.createElement(`a`);
+      link.href = `${downloadBaseUrl}${dotlottie}`;;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     generateRandomBlobs();
@@ -324,7 +358,7 @@ const Home: NextPage = () => {
             </button>
 
             <button
-              onClick={() => alert("hmmmmmmm")}
+              onClick={() => saveAsDotLottie()}
               type="button"
               className="bg-teal-500 py-4 text-white font-bold tracking-wide rounded-md"
             >
