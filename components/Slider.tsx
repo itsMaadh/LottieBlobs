@@ -12,6 +12,7 @@ export const Slider: React.FC<SliderProps> = ({
   min,
   max,
   onChange,
+  value
 }: SliderProps) => (
   <>
     <input
@@ -19,7 +20,7 @@ export const Slider: React.FC<SliderProps> = ({
       role="slider"
       min={min}
       max={max}
-      defaultValue={min}
+      defaultValue={value}
       className={styles.seeker}
       onChange={onChange}
     />

@@ -33,10 +33,10 @@ let extract = require("extract-svg-path").parse;
 const Home: NextPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [size, setSize] = useState(500);
-  const [extraPoints, setExtraPoints] = useState(0);
-  const [frames, setFrames] = useState(5);
-  const [frameLength, setFrameLength] = useState(10);
-  const [randomness, setRandomness] = useState(10);
+  const [extraPoints, setExtraPoints] = useState(10);
+  const [frames, setFrames] = useState(10);
+  const [frameLength, setFrameLength] = useState(50);
+  const [randomness, setRandomness] = useState(20);
   const [src, setSrc] = useState<any>();
   const [color, setColor] = useState<{ r: number; b: number; g: number }>({
     r: 25,
@@ -83,36 +83,24 @@ const Home: NextPage = () => {
   };
 
   const getBezierCurve = async (paths: any) => {
-    let points = [];
-    let point = [];
+    let points: any = [];
+
     let cubic = new CubicBezierShape();
     for (let i = 0; i < paths.length - 1; i++) {
-      if (points.length == 0) {
-        if (paths[i][0] == "M") {
-          point.push([paths[0][1], paths[0][2]]);
-        }
+      let point: any = [];
+      if (i === 0) {
+        point.push([paths[i][1], paths[i][2]])
+        point.push([paths[paths.length - 1][3] - paths[i][1], paths[paths.length - 1][4] - paths[i][2]])
+        point.push([paths[i + 1][1] - paths[i][1], paths[i + 1][2] - paths[i][2]])
 
-        if (paths[i][0] == "C") {
-          point.push([
-            paths[paths.length - 2][3] - paths[0][1],
-            paths[paths.length - 2][4] - paths[0][2],
-          ]);
-          point.push([paths[i][1] - paths[0][1], paths[i][2] - paths[0][2]]);
-          points.push(point);
-        }
-      } else if (paths[i][0] == "C") {
-        point = [];
-        point.push([paths[i - 1][5], paths[i - 1][6]]);
-        point.push([
-          paths[i - 1][3] - paths[i - 1][5],
-          paths[i - 1][4] - paths[i - 1][6],
-        ]);
-        point.push([
-          paths[i][1] - paths[i - 1][5],
-          paths[i][2] - paths[i - 1][6],
-        ]);
-        points.push(point);
+      } else {
+        point.push([paths[i][5], paths[i][6]])
+        point.push([paths[i][3] - paths[i][5], paths[i][4] - paths[i][6]])
+        point.push([paths[i + 1][1] - paths[i][5], paths[i + 1][2] - paths[i][6]])
+
       }
+
+      points.push(point);
     }
     for (let x = 0; x < points.length; x++) {
       cubic.addPoint(
@@ -225,7 +213,7 @@ const Home: NextPage = () => {
   }, [frames, frameLength, extraPoints, randomness, color]);
 
   return (
-    <div className="container mx-auto max-h-screen md:px-2 md:pb-4">
+    <div className="container mx-auto max-h-screen px-4 md:px-2 md:pb-4">
       <div className="my-3">
         <Image
           src="/images/lottie-blobs.png"
@@ -235,7 +223,7 @@ const Home: NextPage = () => {
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
-        <div className="md:col-span-2 border-2 border-dashed border-gray-400 rounded-xl px-36 bg-gray-100">
+        <div className="md:col-span-2 border-2 border-dashed border-gray-400 rounded-xl  px-0 lg:px-36 bg-gray-100"  >
           <LottiePlayer renderer="svg" src={src} loop autoplay controls>
             <Controls
               visible={true}
@@ -336,7 +324,7 @@ const Home: NextPage = () => {
             </button>
 
             <button
-              onClick={() => saveBlob()}
+              onClick={() => alert("hmmmmmmm")}
               type="button"
               className="bg-teal-500 py-4 text-white font-bold tracking-wide rounded-md"
             >
