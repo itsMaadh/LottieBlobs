@@ -41,7 +41,6 @@ const Home: NextPage = () => {
   const [src, setSrc] = useState<any>();
   const [colorFixed, setColorFixed] = useState<any>(true);
 
-
   const [color, setColor] = useState<{ r: number; b: number; g: number }>({
     r: 25,
     b: 215,
@@ -93,15 +92,22 @@ const Home: NextPage = () => {
     for (let i = 0; i < paths.length - 1; i++) {
       let point: any = [];
       if (i === 0) {
-        point.push([paths[i][1], paths[i][2]])
-        point.push([paths[paths.length - 1][3] - paths[i][1], paths[paths.length - 1][4] - paths[i][2]])
-        point.push([paths[i + 1][1] - paths[i][1], paths[i + 1][2] - paths[i][2]])
-
+        point.push([paths[i][1], paths[i][2]]);
+        point.push([
+          paths[paths.length - 1][3] - paths[i][1],
+          paths[paths.length - 1][4] - paths[i][2],
+        ]);
+        point.push([
+          paths[i + 1][1] - paths[i][1],
+          paths[i + 1][2] - paths[i][2],
+        ]);
       } else {
-        point.push([paths[i][5], paths[i][6]])
-        point.push([paths[i][3] - paths[i][5], paths[i][4] - paths[i][6]])
-        point.push([paths[i + 1][1] - paths[i][5], paths[i + 1][2] - paths[i][6]])
-
+        point.push([paths[i][5], paths[i][6]]);
+        point.push([paths[i][3] - paths[i][5], paths[i][4] - paths[i][6]]);
+        point.push([
+          paths[i + 1][1] - paths[i][5],
+          paths[i + 1][2] - paths[i][6],
+        ]);
       }
 
       points.push(point);
@@ -161,10 +167,14 @@ const Home: NextPage = () => {
 
     if (!colorFixed) {
       curves.map((curve: any, i: any) => {
-        fill.color.setValueAtKeyFrame(new Color(
-          Math.floor(Math.random() * 255),
-          Math.floor(Math.random() * 255),
-          Math.floor(Math.random() * 255)), i * frameLength);
+        fill.color.setValueAtKeyFrame(
+          new Color(
+            Math.floor(Math.random() * 255),
+            Math.floor(Math.random() * 255),
+            Math.floor(Math.random() * 255)
+          ),
+          i * frameLength
+        );
       });
     }
 
@@ -176,16 +186,13 @@ const Home: NextPage = () => {
   const generateRandomBlobs = async () => {
     const randomSVGs = [];
 
-
     for (let i = 0; i < frames; i++) {
-      const svgString = blobs2.svg(
-        {
-          seed: Math.random(),
-          extraPoints,
-          randomness,
-          size: 500,
-        }
-      );
+      const svgString = blobs2.svg({
+        seed: Math.random(),
+        extraPoints,
+        randomness,
+        size: 500,
+      });
       randomSVGs.push(svgString);
     }
     // setRandomSvg(randomSVGs[0] as any);
@@ -220,35 +227,41 @@ const Home: NextPage = () => {
   const saveAsDotLottie = async () => {
     const uploadUrl = `https://api.lottiefiles.com/v2/temp-file-upload`;
     const convertUrl = `https://api.dotlottie.io/todotlottie`;
-    const downloadBaseUrl = `https://lottie-editor-api-temp.s3.amazonaws.com/`
+    const downloadBaseUrl = `https://lottie-editor-api-temp.s3.amazonaws.com/`;
 
     const json = src;
     try {
-      const response = await axios.post(uploadUrl, { payload: JSON.stringify(json) }, {
-        headers: { 'Content-Type': 'application/json' }
-      })
+      const response = await axios.post(
+        uploadUrl,
+        { payload: json },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       const json_url = await response.data.payload.data_file;
 
-      const response2 = await axios.post(convertUrl, { url: json_url }, {
-        headers: { 'Content-Type': 'application/json' }
-      })
+      const response2 = await axios.post(
+        convertUrl,
+        { url: json_url },
+        {
+          headers: { Accept: "*/*" },
+        }
+      );
 
       const dotlottie = await response2.data.file;
 
       const fileName = `random-bLottie.lottie`;
       const link = document.createElement(`a`);
-      link.href = `${downloadBaseUrl}${dotlottie}`;;
+      link.href = `${downloadBaseUrl}${dotlottie}`;
       link.download = fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     generateRandomBlobs();
@@ -266,7 +279,7 @@ const Home: NextPage = () => {
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
-        <div className="md:col-span-2 border-2 border-dashed border-gray-400 rounded-xl  px-0 lg:px-36 bg-gray-100"  >
+        <div className="md:col-span-2 border-2 border-dashed border-gray-400 rounded-xl  px-0 lg:px-36 bg-gray-100">
           <LottiePlayer renderer="svg" src={src} loop autoplay controls>
             <Controls
               visible={true}
@@ -276,9 +289,10 @@ const Home: NextPage = () => {
         </div>
         <div className="grid grid-rows-6 gap-4 h-full items-center">
           <div className="py-2 shadow-2xl rounded-xl px-5">
-            <p className="font-bold text-gray-400 uppercase pb-3"
+            <p
+              className="font-bold text-gray-400 uppercase pb-3"
               onClick={() => {
-                setColorFixed(!colorFixed)
+                setColorFixed(!colorFixed);
               }}
             >
               Change Color
